@@ -5,6 +5,7 @@ from urllib.parse import urlparse, parse_qs
 from collections import Counter
 import re
 import os
+from html import escape
 
 os.makedirs('./analysis/output', exist_ok=True)
 
@@ -230,7 +231,216 @@ results = {
     'pagesize_distribution': ps_series.value_counts().head(10).reset_index().rename(columns={'index':'pagesize',0:'count'}).to_dict(orient='records') if pagesizes else [],
 }
 
+
+def _fmt_int(value):
+        return f"{int(value):,}".replace(',', '.')
+
+
+def _fmt_pct(value):
+        return f"{float(value):.2f}%".replace('.', ',')
+
+
+def _rows_to_html(rows, columns):
+        html_rows = []
+        for row in rows:
+                cells = []
+                for col in columns:
+                        cell_value = row.get(col, '')
+                        cells.append(f"<td>{escape(str(cell_value))}</td>")
+                html_rows.append(f"<tr>{''.join(cells)}</tr>")
+        return '\n'.join(html_rows)
+
+
+def generate_template_html(data, output_path):
+        summary = data['summary']
+        top_hosts = data['hosts'][:10]
+        top_endpoints = data['top_endpoints'][:15]
+        top_categories = data['categories'][:10]
+
+        hosts_rows = []
+        for idx, row in enumerate(top_hosts, start=1):
+                hosts_rows.append({
+                        '#': idx,
+                        'Host': row.get('host', ''),
+                        'Requests': _fmt_int(row.get('requests', 0)),
+                        'Participação': _fmt_pct(row.get('pct', 0)),
+                })
+
+        endpoints_rows = []
+        for idx, row in enumerate(top_endpoints, start=1):
+                endpoints_rows.append({
+                        '#': idx,
+                        'Endpoint': row.get('endpoint', ''),
+                        'Requests': _fmt_int(row.get('count', 0)),
+                        'Participação': _fmt_pct(row.get('pct', 0)),
+                })
+
+        categories_rows = []
+        for idx, row in enumerate(top_categories, start=1):
+                categories_rows.append({
+                        '#': idx,
+                        'Categoria': row.get('category', ''),
+                        'Requests': _fmt_int(row.get('count', 0)),
+                        'Participação': _fmt_pct(row.get('pct', 0)),
+                })
+
+        html_template = f"""<!DOCTYPE html>
+<html lang=\"pt-BR\">
+<head>
+    <meta charset=\"UTF-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
+    <title>Template - Resultado da Análise de Logs</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f9;
+            color: #1f2937;
+        }}
+        .container {{
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }}
+        h1 {{
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+            color: #14532d;
+        }}
+        .subtitle {{
+            margin-bottom: 20px;
+            color: #4b5563;
+        }}
+        .kpis {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }}
+        .card {{
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }}
+        .card-label {{
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }}
+        .card-value {{
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111827;
+        }}
+        section {{
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }}
+        h2 {{
+            font-size: 1.05rem;
+            color: #14532d;
+            margin-top: 0;
+        }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }}
+        th, td {{
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            padding: 8px;
+        }}
+        th {{
+            background: #ecfdf5;
+            color: #065f46;
+        }}
+    </style>
+</head>
+<body>
+    <div class=\"container\">
+        <h1>Template de Resultados da Análise</h1>
+        <p class=\"subtitle\">Arquivo gerado automaticamente a partir de analysis_results.json.</p>
+
+        <div class=\"kpis\">
+            <div class=\"card\">
+                <div class=\"card-label\">Total de Requests</div>
+                <div class=\"card-value\">{_fmt_int(summary['total_requests'])}</div>
+            </div>
+            <div class=\"card\">
+                <div class=\"card-label\">Hosts Únicos</div>
+                <div class=\"card-value\">{_fmt_int(summary['unique_hosts'])}</div>
+            </div>
+            <div class=\"card\">
+                <div class=\"card-label\">Endpoints Únicos</div>
+                <div class=\"card-value\">{_fmt_int(summary['unique_endpoints'])}</div>
+            </div>
+            <div class=\"card\">
+                <div class=\"card-label\">Requests com Parâmetros</div>
+                <div class=\"card-value\">{_fmt_int(summary['requests_with_params'])}</div>
+            </div>
+            <div class=\"card\">
+                <div class=\"card-label\">Duplicatas em 60s</div>
+                <div class=\"card-value\">{_fmt_pct(data['duplicate_pct_60s'])}</div>
+            </div>
+            <div class=\"card\">
+                <div class=\"card-label\">Heavy Queries (limit=-1)</div>
+                <div class=\"card-value\">{_fmt_int(summary['heavy_queries_limit_minus1'])}</div>
+            </div>
+        </div>
+
+        <section>
+            <h2>Top Hosts</h2>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Host</th><th>Requests</th><th>Participação</th></tr>
+                </thead>
+                <tbody>
+                    {_rows_to_html(hosts_rows, ['#', 'Host', 'Requests', 'Participação'])}
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Top Endpoints</h2>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Endpoint</th><th>Requests</th><th>Participação</th></tr>
+                </thead>
+                <tbody>
+                    {_rows_to_html(endpoints_rows, ['#', 'Endpoint', 'Requests', 'Participação'])}
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Categorias</h2>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Categoria</th><th>Requests</th><th>Participação</th></tr>
+                </thead>
+                <tbody>
+                    {_rows_to_html(categories_rows, ['#', 'Categoria', 'Requests', 'Participação'])}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
+"""
+
+        with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(html_template)
+
 with open('./analysis/output/analysis_results.json', 'w') as f:
     json.dump(results, f, indent=2, default=str)
 
-print("\n✅ Análise concluída! Resultados salvos em analysis_results.json")
+generate_template_html(results, './analysis/output/template.html')
+
+print("\n✅ Análise concluída! Resultados salvos em analysis_results.json e template.html")
