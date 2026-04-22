@@ -1,31 +1,31 @@
 {
   "green_by_default": {
-    "heavy_queries_count": 15498,
-    "no_pagination_count": 68713,
-    "no_fields_count": 102663,
-    "potential_reduction_requests": 15498,
+    "heavy_queries_count": 60373,
+    "no_pagination_count": 263864,
+    "no_fields_count": 685836,
+    "potential_reduction_requests": 60373,
     "potential_payload_reduction_pct": 45.0
   },
   "just_latest_updates": {
-    "delta_candidates_count": 149135,
-    "delta_candidates_pct": 71.640622372953,
-    "avg_time_between_polls": 22.344535400811342,
+    "delta_candidates_count": 590709,
+    "delta_candidates_pct": 53.932039544081725,
+    "avg_time_between_polls": 21.340893641369945,
     "potential_bandwidth_saving_pct": 70.0
   },
   "wish_list": {
-    "current_usage_pct": 50.6833324526471,
-    "non_usage_count": 102663,
+    "current_usage_pct": 37.38281578111248,
+    "non_usage_count": 685836,
     "top_fields": {
-      "Id%2CDetail.de.Title%2CContactInfos.de.City": 22362,
-      "Id%2CAccoDetail.de.Name%2CAccoDetail.de.City": 22333,
-      "Id%2CDetail.it.Title%2CContactInfos.it.City": 17741,
-      "Id%2CAccoDetail.it.Name%2CAccoDetail.it.City": 17702,
-      "Id": 9780,
-      "Id%2CMssResponseShort": 7032,
-      "Detail.de.Title": 4579,
-      "ContactInfos.de.City": 4570,
-      "AccoDetail.de.Name": 4560,
-      "AccoDetail.de.City": 4560
+      "Id": 79811,
+      "Id%2CDetail.de.Title%2CContactInfos.de.City": 79349,
+      "Id%2CAccoDetail.de.Name%2CAccoDetail.de.City": 79235,
+      "Id%2CDetail.it.Title%2CContactInfos.it.City": 63006,
+      "Id%2CAccoDetail.it.Name%2CAccoDetail.it.City": 62925,
+      "Detail.de.Title": 38637,
+      "ContactInfos.de.City": 38609,
+      "AccoDetail.de.Name": 38526,
+      "AccoDetail.de.City": 38526,
+      "Id%2CMssResponseShort": 16133
     },
     "potential_payload_reduction_pct": 60.0
   },
@@ -39,7 +39,7 @@
     ]
   },
   "overall_impact": {
-    "total_requests_analyzed": 208171,
+    "total_requests_analyzed": 1095284,
     "estimated_energy_reduction_pct": 55.0,
     "estimated_carbon_footprint_reduction_pct": 52.0
   }

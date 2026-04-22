@@ -9,7 +9,7 @@ from urllib.parse import urlparse, parse_qs
 import os
 
 # Configurations
-CSV_LOGS = '/logs/log_total.csv'
+CSV_LOGS = '../../../logs/unified_logs.csv'
 DB_NAME = 'green_software_metrics_en.db'
 SAMPLE_SIZE = 100  # Increased for better sampling
 TIMEOUT = 10      # Timeout for requests
@@ -81,7 +81,7 @@ def measure_request(host, uri):
     
     start_time = time.time()
     try:
-        response = requests.get(url, timeout=TIMEOUT, stream=True)
+        response = requests.get(url, timeout=TIMEOUT, stream=True, verify=False)
         latency = time.time() - start_time
         
         response_body_bytes = response.content

@@ -1,3 +1,5 @@
+import re
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -91,5 +93,5 @@ if __name__ == "__main__":
     # Example usage (assuming analysis_results.json is in /home/ubuntu/analysis/output/)
     # For skill execution, paths will be passed as arguments
     # For local testing:
-    # generate_charts("/home/ubuntu/analysis/output/analysis_results.json", "/home/ubuntu/analysis/output/charts")
-    pass
+    generate_charts("../references/analysis_results.json", "./analysis/output/charts")
+    #pass

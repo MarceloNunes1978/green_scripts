@@ -6,10 +6,10 @@ from collections import Counter
 import re
 import os
 
-os.makedirs('/analysis/output', exist_ok=True)
+os.makedirs('./analysis/output', exist_ok=True)
 
 # ─── Carregar dados ───────────────────────────────────────────────────────────
-df = pd.read_csv('/logs/log_total.csv')
+df = pd.read_csv('../../../logs/unified_logs.csv')
 df.columns = ['timestamp', 'host', 'uri']
 
 # Parse timestamp
@@ -230,7 +230,7 @@ results = {
     'pagesize_distribution': ps_series.value_counts().head(10).reset_index().rename(columns={'index':'pagesize',0:'count'}).to_dict(orient='records') if pagesizes else [],
 }
 
-with open('/analysis/output/analysis_results.json', 'w') as f:
+with open('./analysis/output/analysis_results.json', 'w') as f:
     json.dump(results, f, indent=2, default=str)
 
 print("\n✅ Análise concluída! Resultados salvos em analysis_results.json")

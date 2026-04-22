@@ -5,7 +5,7 @@ import re
 from urllib.parse import urlparse, parse_qs
 
 # Load data
-df = pd.read_csv("/logs/logs_total.csv")
+df = pd.read_csv("../../../logs/unified_logs.csv")
 df.columns = ["timestamp", "host", "uri"]
 
 # ─── 1. GREEN BY DEFAULT ──────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ patterns_results = {
     }
 }
 
-output_path = "/skills/green-software-analyzer/references/patterns_analysis_en.json"
+output_path = "../references/patterns_analysis_en.json"
 with open(output_path, "w") as f:
     json.dump(patterns_results, f, indent=2)
 

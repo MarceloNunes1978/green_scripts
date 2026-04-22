@@ -1,0 +1,14 @@
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Large log/data files
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/

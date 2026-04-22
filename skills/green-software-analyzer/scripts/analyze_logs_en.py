@@ -51,7 +51,7 @@ def analyze_logs(csv_path):
         "language_distribution": df["language"].value_counts(normalize=True).mul(100).round(2).to_dict()
     }
 
-    output_path = "/skills/green-software-analyzer/references/analysis_results.json"
+    output_path = "../references/analysis_results.json"
     with open(output_path, "w") as f:
         json.dump(results, f, indent=4)
     
@@ -62,5 +62,5 @@ if __name__ == "__main__":
     # Example usage (assuming logs_24_march_16_00.csv is in /home/ubuntu/upload/)
     # For skill execution, the path will be passed as an argument
     # For local testing:
-    # analyze_logs("/home/ubuntu/upload/logs_24_march_16_00.csv")
-    pass
+    analyze_logs("../../../logs/unified_logs.csv")
+    #pass
