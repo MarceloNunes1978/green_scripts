@@ -437,10 +437,10 @@
   <h1>Análise de Logs — OpenDataHub</h1>
   <p>Padrões de uso, eficiência energética e oportunidades de redução de requests/responses entre atores</p>
   <div class="header-meta">
-    <span>📅 24 de Março de 2025 — 16h00 às 23h59</span>
-    <span>⏱ 480 minutos de dados</span>
-    <span>📊 208.171 requests analisadas</span>
-    <span>🖥 6 hosts monitorados</span>
+    <span>📅 <span id="meta-period">24 de Março de 2025 — 16h00 às 23h59</span></span>
+    <span>⏱ <span id="meta-duration">480</span> minutos de dados</span>
+    <span>📊 <span id="meta-total">208.171</span> requests analisadas</span>
+    <span>🖥 <span id="meta-hosts">6</span> hosts monitorados</span>
   </div>
 </header>
 
@@ -469,51 +469,51 @@
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-icon">📨</div>
-        <div class="kpi-value">208.171</div>
+        <div class="kpi-value" id="kpi-total">208.171</div>
         <div class="kpi-label">Total de Requests</div>
-        <div class="kpi-sub">~434 req/min em média</div>
+        <div class="kpi-sub" id="kpi-total-sub">~434 req/min em média</div>
       </div>
       <div class="kpi-card danger">
         <div class="kpi-icon">♻️</div>
-        <div class="kpi-value">61,3%</div>
+        <div class="kpi-value" id="kpi-dup-pct">61,3%</div>
         <div class="kpi-label">Requests Duplicadas (60s)</div>
-        <div class="kpi-sub danger">127.677 requests evitáveis</div>
+        <div class="kpi-sub danger" id="kpi-dup-count">127.677 requests evitáveis</div>
       </div>
       <div class="kpi-card warn">
         <div class="kpi-icon">⚡</div>
-        <div class="kpi-value">7,4%</div>
+        <div class="kpi-value" id="kpi-heavy-pct">7,4%</div>
         <div class="kpi-label">Heavy Queries (limit=-1)</div>
-        <div class="kpi-sub warn">15.498 queries sem paginação</div>
+        <div class="kpi-sub warn" id="kpi-heavy-count">15.498 queries sem paginação</div>
       </div>
       <div class="kpi-card blue">
         <div class="kpi-icon">🗂</div>
-        <div class="kpi-value">5.902</div>
+        <div class="kpi-value" id="kpi-endpoints">5.902</div>
         <div class="kpi-label">Endpoints Únicos</div>
-        <div class="kpi-sub">43.909 URIs distintas</div>
+        <div class="kpi-sub" id="kpi-uris">43.909 URIs distintas</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">🌐</div>
-        <div class="kpi-value">6</div>
+        <div class="kpi-value" id="kpi-hosts">6</div>
         <div class="kpi-label">Hosts (Atores)</div>
         <div class="kpi-sub">Turismo + Mobilidade</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">🔄</div>
-        <div class="kpi-value">14,5</div>
+        <div class="kpi-value" id="kpi-rps">14,5</div>
         <div class="kpi-label">Req/segundo (média)</div>
-        <div class="kpi-sub">Pico: 108 req/s</div>
+        <div class="kpi-sub" id="kpi-rps-peak">Pico: 108 req/s</div>
       </div>
       <div class="kpi-card warn">
         <div class="kpi-icon">📄</div>
-        <div class="kpi-value">58,0%</div>
+        <div class="kpi-value" id="kpi-pag-pct">58,0%</div>
         <div class="kpi-label">Requests com Paginação</div>
-        <div class="kpi-sub warn">120.740 com pagesize/pagenumber</div>
+        <div class="kpi-sub warn" id="kpi-pag-count">120.740 com pagesize/pagenumber</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">🌍</div>
-        <div class="kpi-value">9</div>
+        <div class="kpi-value" id="kpi-langs">9</div>
         <div class="kpi-label">Idiomas Detectados</div>
-        <div class="kpi-sub">DE (31%) · IT (19%) · EN (6%)</div>
+        <div class="kpi-sub" id="kpi-langs-sub">DE (31%) · IT (19%) · EN (6%)</div>
       </div>
     </div>
 
@@ -573,80 +573,7 @@
               <th>Status</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td><strong>tourism.opendatahub.bz.it</strong></td>
-              <td><span class="badge badge-green">Turismo</span></td>
-              <td>113.981</td>
-              <td>
-                <div class="progress-bar"><div class="progress-fill" style="width:54.75%;background:#27ae60"></div></div>
-                54,75%
-              </td>
-              <td>237,5</td>
-              <td><span class="badge badge-orange">Legado</span></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td><strong>tourism.api.opendatahub.com</strong></td>
-              <td><span class="badge badge-green">Turismo</span></td>
-              <td>48.643</td>
-              <td>
-                <div class="progress-bar"><div class="progress-fill" style="width:23.37%;background:#1abc9c"></div></div>
-                23,37%
-              </td>
-              <td>101,3</td>
-              <td><span class="badge badge-green">Atual</span></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td><strong>mobility.api.opendatahub.com</strong></td>
-              <td><span class="badge badge-blue">Mobilidade</span></td>
-              <td>25.362</td>
-              <td>
-                <div class="progress-bar"><div class="progress-fill" style="width:12.18%;background:#3498db"></div></div>
-                12,18%
-              </td>
-              <td>52,8</td>
-              <td><span class="badge badge-green">Atual</span></td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td><strong>tourism.opendatahub.com</strong></td>
-              <td><span class="badge badge-green">Turismo</span></td>
-              <td>13.605</td>
-              <td>
-                <div class="progress-bar"><div class="progress-fill" style="width:6.54%;background:#16a085"></div></div>
-                6,54%
-              </td>
-              <td>28,3</td>
-              <td><span class="badge badge-orange">Legado</span></td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td><strong>mobility.api.opendatahub.bz.it</strong></td>
-              <td><span class="badge badge-blue">Mobilidade</span></td>
-              <td>5.296</td>
-              <td>
-                <div class="progress-bar"><div class="progress-fill" style="width:2.54%;background:#2980b9"></div></div>
-                2,54%
-              </td>
-              <td>11,0</td>
-              <td><span class="badge badge-orange">Legado</span></td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td><strong>tourism.api.opendatahub.bz.it</strong></td>
-              <td><span class="badge badge-green">Turismo</span></td>
-              <td>1.284</td>
-              <td>
-                <div class="progress-bar"><div class="progress-fill" style="width:0.62%;background:#82e0aa"></div></div>
-                0,62%
-              </td>
-              <td>2,7</td>
-              <td><span class="badge badge-orange">Legado</span></td>
-            </tr>
-          </tbody>
+          <tbody id="hostsTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -1059,79 +986,7 @@
 
 <!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
 <script>
-// ── Dados da análise ──────────────────────────────────────────────────────────
-const data = {
-  hosts: [
-    { host: 'tourism.opendatahub.bz.it', requests: 113981, pct: 54.75 },
-    { host: 'tourism.api.opendatahub.com', requests: 48643, pct: 23.37 },
-    { host: 'mobility.api.opendatahub.com', requests: 25362, pct: 12.18 },
-    { host: 'tourism.opendatahub.com', requests: 13605, pct: 6.54 },
-    { host: 'mobility.api.opendatahub.bz.it', requests: 5296, pct: 2.54 },
-    { host: 'tourism.api.opendatahub.bz.it', requests: 1284, pct: 0.62 }
-  ],
-  categories: [
-    { category: 'Accommodation', count: 62606, pct: 30.07 },
-    { category: 'Activity/POI', count: 61354, pct: 29.47 },
-    { category: 'Events', count: 32772, pct: 15.74 },
-    { category: 'Other', count: 13830, pct: 6.64 },
-    { category: 'Weather', count: 12108, pct: 5.82 },
-    { category: 'ECharging', count: 10861, pct: 5.22 },
-    { category: 'Mobility', count: 8170, pct: 3.92 },
-    { category: 'Ski', count: 3714, pct: 1.78 },
-    { category: 'Metadata', count: 2064, pct: 0.99 },
-    { category: 'Gastronomy', count: 683, pct: 0.33 }
-  ],
-  topEndpoints: [
-    { endpoint: '/v1/STA/ODHActivityPoi', count: 45046, pct: 21.64 },
-    { endpoint: '/v1/STA/Accommodation', count: 44936, pct: 21.59 },
-    { endpoint: '/v1/EventShort/GetbyRoomBooked', count: 25326, pct: 12.17 },
-    { endpoint: '/v2/flat,node/EChargingPlug/.../latest', count: 8029, pct: 3.86 },
-    { endpoint: '/v1/Accommodation', count: 7191, pct: 3.45 },
-    { endpoint: '/v1/AccommodationAvailable', count: 4438, pct: 2.13 },
-    { endpoint: '/v1/Weather', count: 4323, pct: 2.08 },
-    { endpoint: '/api/STA/Accommodation', count: 3782, pct: 1.82 },
-    { endpoint: '/api/STA/ODHActivityPoi', count: 3776, pct: 1.81 },
-    { endpoint: '/v1/ODHActivityPoi', count: 3623, pct: 1.74 }
-  ],
-  duplicateWindows: { '1s': 61660, '5s': 89769, '10s': 100300, '30s': 118378, '60s': 127677 },
-  languages: [
-    { language: 'Não especificado', count: 82941, pct: 39.84 },
-    { language: 'Alemão (DE)', count: 65022, pct: 31.23 },
-    { language: 'Italiano (IT)', count: 40340, pct: 19.38 },
-    { language: 'Inglês (EN)', count: 13120, pct: 6.30 },
-    { language: 'Tcheco (CZ)', count: 3120, pct: 1.50 },
-    { language: 'Holandês (NL)', count: 1608, pct: 0.77 },
-    { language: 'Outros', count: 2020, pct: 0.97 }
-  ],
-  origins: [
-    { origin: 'webcomp-events-today-eurac', count: 24372 },
-    { origin: 'webcomp-howtoarriveinsouthtyrol', count: 1851 },
-    { origin: 'webcomp-flightdata', count: 1357 },
-    { origin: 'webcomp-mobility-echarging-map', count: 1217 },
-    { origin: 'webcomp-events-today-noi', count: 634 },
-    { origin: 'webcomp-parking-app', count: 537 },
-    { origin: 'webcomp-parking-dashboard', count: 248 },
-    { origin: 'webcomp-mobility-echarging-dashboard', count: 103 },
-    { origin: 'outros', count: 59 }
-  ],
-  cacheCandidates: [
-    { endpoint: '/v1/ODHTag/ski%20alpin', total_requests: 3206, unique_uris: 1, cache_ratio: 3206 },
-    { endpoint: '/v1/STA/Accommodation', total_requests: 44936, unique_uris: 27, cache_ratio: 1664 },
-    { endpoint: '/v1/STA/ODHActivityPoi', total_requests: 45046, unique_uris: 33, cache_ratio: 1365 },
-    { endpoint: '/v2/flat,edge/LinkStation/', total_requests: 1140, unique_uris: 1, cache_ratio: 1140 },
-    { endpoint: '/v2/tree/LinkStation/*/latest', total_requests: 1140, unique_uris: 1, cache_ratio: 1140 },
-    { endpoint: '/v2/flat,event/PROVINCE_BZ/latest', total_requests: 935, unique_uris: 1, cache_ratio: 935 },
-    { endpoint: '/v1/Weather/SnowReport', total_requests: 709, unique_uris: 1, cache_ratio: 709 },
-    { endpoint: '/v1/Weather/Measuringpoint', total_requests: 606, unique_uris: 1, cache_ratio: 606 },
-    { endpoint: '/v2/flat,node/ParkingStation/free/latest', total_requests: 1188, unique_uris: 2, cache_ratio: 594 },
-    { endpoint: '/v1/Weather', total_requests: 4323, unique_uris: 11, cache_ratio: 393 }
-  ],
-  hourly: [
-    {hour:16,requests:27800},{hour:17,requests:29100},{hour:18,requests:28400},
-    {hour:19,requests:26200},{hour:20,requests:24100},{hour:21,requests:22800},
-    {hour:22,requests:21500},{hour:23,requests:28271}
-  ]
-};
+// ── Dados carregados dinamicamente de dashboard_data.json ─────────────────────
 
 // ── Paleta de cores ───────────────────────────────────────────────────────────
 const GREENS = ['#1a5c33','#27ae60','#2ecc71','#1abc9c','#16a085','#0e6655','#3d9970','#52be80','#82e0aa','#a9dfbf'];
@@ -1143,6 +998,69 @@ function shortEndpoint(ep) {
   const parts = ep.split('/');
   return parts.slice(-2).join('/').substring(0, 35);
 }
+
+// ── Carrega todos os dados e inicializa o dashboard ───────────────────────────
+fetch('dashboard_data.json')
+  .then(r => r.json())
+  .then(data => {
+
+// ── Atualiza DOM: header, KPIs e tabela de hosts ──────────────────────────────
+(function updateDOM() {
+  const m   = data.meta;
+  const fmt = n => Number(n).toLocaleString('pt-BR');
+  const pct = (n, d=1) => n.toFixed(d).replace('.', ',') + '%';
+
+  document.getElementById('meta-period').textContent   = m.period_label;
+  document.getElementById('meta-duration').textContent  = fmt(m.duration_minutes);
+  document.getElementById('meta-total').textContent     = fmt(m.total_requests);
+  document.getElementById('meta-hosts').textContent     = m.unique_hosts;
+
+  document.getElementById('kpi-total').textContent      = fmt(m.total_requests);
+  document.getElementById('kpi-total-sub').textContent  = `~${fmt(m.avg_rpm)} req/min em média`;
+  document.getElementById('kpi-dup-pct').textContent    = pct(m.duplicate_60s_pct);
+  document.getElementById('kpi-dup-count').textContent  = `${fmt(m.duplicate_60s_count)} requests evitáveis`;
+  document.getElementById('kpi-heavy-pct').textContent  = pct(m.heavy_queries_pct);
+  document.getElementById('kpi-heavy-count').textContent= `${fmt(m.heavy_queries_count)} queries sem paginação`;
+  document.getElementById('kpi-endpoints').textContent  = fmt(m.unique_endpoints);
+  document.getElementById('kpi-uris').textContent       = `${fmt(m.unique_uris)} URIs distintas`;
+  document.getElementById('kpi-hosts').textContent      = m.unique_hosts;
+  document.getElementById('kpi-rps').textContent        = String(m.avg_rps).replace('.', ',');
+  document.getElementById('kpi-rps-peak').textContent   = `Pico: ${fmt(m.peak_rps)} req/s`;
+  document.getElementById('kpi-pag-pct').textContent    = pct(m.pagination_pct);
+  document.getElementById('kpi-pag-count').textContent  = `${fmt(m.pagination_count)} com pagesize/pagenumber`;
+  document.getElementById('kpi-langs').textContent      = m.unique_languages;
+  const topLangs = data.languages.filter(l => !l.language.includes('especificado')).slice(0, 3);
+  if (topLangs.length >= 3) {
+    document.getElementById('kpi-langs-sub').textContent =
+      topLangs.map(l => `${l.language.split(' ')[0]} (${l.pct}%)`).join(' · ');
+  }
+})();
+
+// ── Tabela de hosts ───────────────────────────────────────────────────────────
+(function buildHostTable() {
+  const colors = ['#27ae60','#1abc9c','#3498db','#16a085','#2980b9','#82e0aa'];
+  const tbody = document.getElementById('hostsTableBody');
+  data.hosts.forEach((h, i) => {
+    const typeClass   = h.type === 'Mobilidade' ? 'badge-blue'   : 'badge-green';
+    const statusClass = h.status === 'Atual'    ? 'badge-green'  : 'badge-orange';
+    const color = colors[i % colors.length];
+    tbody.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${h.host}</strong></td>
+        <td><span class="badge ${typeClass}">${h.type}</span></td>
+        <td>${Number(h.requests).toLocaleString('pt-BR')}</td>
+        <td>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${h.pct}%;background:${color}"></div>
+          </div>
+          ${h.pct.toFixed(2).replace('.', ',')}%
+        </td>
+        <td>${h.rpm.toLocaleString('pt-BR')}</td>
+        <td><span class="badge ${statusClass}">${h.status}</span></td>
+      </tr>`;
+  });
+})();
 
 // ── Chart 1: Host Bar ─────────────────────────────────────────────────────────
 new Chart(document.getElementById('hostChart'), {
@@ -1226,29 +1144,19 @@ new Chart(document.getElementById('originsChart'), {
   }
 });
 
-// ── Chart 4: Timeline ─────────────────────────────────────────────────────────
-// Gerar dados de timeline simulados com base nas estatísticas reais
-// (480 pontos de minutos, média 434, pico 108/s)
-const timelineLabels = [];
-const timelineValues = [];
-for (let m = 0; m < 480; m++) {
-  const h = 16 + Math.floor(m / 60);
-  const min = m % 60;
-  timelineLabels.push(m % 30 === 0 ? `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}` : '');
-}
-
-fetch('analysis_results.json').then(r=>r.json()).then(d=>{
-  const rpm = d.requests_per_minute;
-  const vals = rpm.map(r => r.requests);
+// ── Chart 4: Timeline (requests_per_minute do JSON) ───────────────────────────
+(function buildTimeline() {
+  const rpm    = data.requests_per_minute;
+  const vals   = rpm.map(r => r.requests);
   const labels = rpm.map(r => r.minute_bin_str);
-  const ctx = document.getElementById('timelineChart').getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 350);
+  const ctx    = document.getElementById('timelineChart').getContext('2d');
+  const grad   = ctx.createLinearGradient(0, 0, 0, 350);
   grad.addColorStop(0, 'rgba(39,174,96,0.4)');
   grad.addColorStop(1, 'rgba(39,174,96,0.02)');
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels,
+      labels,
       datasets: [{
         label: 'Requests/min',
         data: vals,
@@ -1265,41 +1173,18 @@ fetch('analysis_results.json').then(r=>r.json()).then(d=>{
       maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.raw} req/min` } }
+        tooltip: { callbacks: { label: c => ` ${c.raw} req/min` } }
       },
       scales: {
-        x: {
-          grid: { color: '#f5f5f5' },
-          ticks: {
-            maxTicksLimit: 16,
-            font: { size: 10 }
-          }
-        },
-        y: {
-          grid: { color: '#f0f0f0' },
-          ticks: { callback: v => v.toLocaleString('pt-BR') }
-        }
+        x: { grid: { color: '#f5f5f5' }, ticks: { maxTicksLimit: 16, font: { size: 10 } } },
+        y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR') } }
       }
     }
   });
-}).catch(()=>{
-  // fallback sem JSON
-  const ctx = document.getElementById('timelineChart').getContext('2d');
-  const grad = ctx.createLinearGradient(0,0,0,350);
-  grad.addColorStop(0,'rgba(39,174,96,0.4)');
-  grad.addColorStop(1,'rgba(39,174,96,0.02)');
-  const fakeVals = Array.from({length:480},(_,i)=>300+Math.random()*400+Math.sin(i/30)*100);
-  new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:Array.from({length:480},(_,i)=>{const h=16+Math.floor(i/60);const m=i%60;return i%30===0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`:''}),
-      datasets:[{label:'Requests/min',data:fakeVals,borderColor:'#1a7a4a',backgroundColor:grad,fill:true,tension:0.3,pointRadius:0,borderWidth:2}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f5f5f5'},ticks:{maxTicksLimit:16,font:{size:10}}},y:{grid:{color:'#f0f0f0'}}}}
-  });
-});
+})();
 
 // ── Chart 5: Hourly ───────────────────────────────────────────────────────────
+const maxHourReq = Math.max(...data.hourly.map(h => h.requests));
 new Chart(document.getElementById('hourlyChart'), {
   type: 'bar',
   data: {
@@ -1307,7 +1192,7 @@ new Chart(document.getElementById('hourlyChart'), {
     datasets: [{
       label: 'Requests',
       data: data.hourly.map(h => h.requests),
-      backgroundColor: data.hourly.map((h,i) => i === 1 ? '#e74c3c' : '#27ae60'),
+      backgroundColor: data.hourly.map(h => h.requests === maxHourReq ? '#e74c3c' : '#27ae60'),
       borderRadius: 5
     }]
   },
@@ -1382,13 +1267,13 @@ new Chart(document.getElementById('topEndpointsChart'), {
 });
 
 // ── Chart 8: Duplicate Windows ────────────────────────────────────────────────
-const dupLabels = ['1s', '5s', '10s', '30s', '60s'];
-const dupValues = [61660, 89769, 100300, 118378, 127677];
-const dupPcts   = [29.6, 43.1, 48.2, 56.9, 61.3];
+const dupKeys   = ['1s', '5s', '10s', '30s', '60s'];
+const dupValues = dupKeys.map(k => data.duplicateWindows[k] || 0);
+const dupPcts   = dupKeys.map(k => data.duplicateWindowPcts[k] || 0);
 new Chart(document.getElementById('duplicateChart'), {
   type: 'bar',
   data: {
-    labels: dupLabels,
+    labels: dupKeys,
     datasets: [{
       label: 'Requests Duplicadas',
       data: dupValues,
@@ -1411,20 +1296,21 @@ new Chart(document.getElementById('duplicateChart'), {
       x: { grid: { display: false } },
       y: {
         grid: { color: '#f0f0f0' },
-        ticks: { callback: v => v.toLocaleString('pt-BR') },
-        max: 210000
+        ticks: { callback: v => v.toLocaleString('pt-BR') }
       }
     }
   }
 });
 
 // ── Chart 9: Duplicate Impact ─────────────────────────────────────────────────
+const dup60count  = data.meta.duplicate_60s_count;
+const totalReqs   = data.meta.total_requests;
 new Chart(document.getElementById('duplicateImpactChart'), {
   type: 'doughnut',
   data: {
     labels: ['Requests Únicas (60s)', 'Duplicatas Evitáveis (60s)'],
     datasets: [{
-      data: [208171 - 127677, 127677],
+      data: [totalReqs - dup60count, dup60count],
       backgroundColor: ['#27ae60', '#e74c3c'],
       borderWidth: 3,
       borderColor: '#fff'
@@ -1437,7 +1323,7 @@ new Chart(document.getElementById('duplicateImpactChart'), {
       legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 15 } },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${(ctx.raw/208171*100).toFixed(1)}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${(ctx.raw / totalReqs * 100).toFixed(1)}%)`
         }
       }
     },
@@ -1499,13 +1385,22 @@ data.cacheCandidates.forEach((c, i) => {
 });
 
 // ── Chart 11: Strategy ────────────────────────────────────────────────────────
+const w = data.duplicateWindowPcts;
 new Chart(document.getElementById('strategyChart'), {
   type: 'bar',
   data: {
     labels: ['Cache 60s TTL','Cache 30s TTL','Cache 10s TTL','Cache 5s TTL','Debounce 5s','Remoção limit=-1','Consolidação Hosts'],
     datasets: [{
       label: '% de Requests Reduzidas',
-      data: [61.3, 56.9, 48.2, 43.1, 43.1, 7.4, 34.0],
+      data: [
+        w['60s'] || 0,
+        w['30s'] || 0,
+        w['10s'] || 0,
+        w['5s']  || 0,
+        w['5s']  || 0,
+        data.meta.heavy_queries_pct || 0,
+        34.0
+      ],
       backgroundColor: ['#1a5c33','#1e8449','#27ae60','#52be80','#3498db','#9b59b6','#e67e22'],
       borderRadius: 6
     }]
@@ -1562,6 +1457,9 @@ new Chart(document.getElementById('languageChart'), {
     }
   }
 });
+
+// ── Fecha o bloco fetch ───────────────────────────────────────────────────────
+}).catch(err => console.error('Erro ao carregar dashboard_data.json:', err));
 
 // ── Nav active on scroll ──────────────────────────────────────────────────────
 const sections = document.querySelectorAll('section[id]');
