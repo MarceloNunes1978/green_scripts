@@ -851,6 +851,120 @@
       </div>
     </div>
 
+    <!-- Métricas reais do simulador -->
+    <div class="card" style="margin-top:0;">
+      <div class="card-title">Métricas Reais — Traffic Simulator</div>
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1.2rem;">
+        Dados coletados via simulação HTTP real (<span id="sim-total">—</span> URIs únicas simuladas):
+        tamanho médio de payload e latência por design pattern e por host.
+      </p>
+      <div class="grid-2">
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Distribuição por Pattern</div>
+          <table>
+            <thead>
+              <tr><th>Pattern</th><th>Requests</th><th>%</th><th>Avg KB</th><th>Avg Latência</th></tr>
+            </thead>
+            <tbody id="simPatternTable"></tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Tamanho Médio de Resposta por Host (KB)</div>
+          <div class="chart-container medium">
+            <canvas id="simHostSizeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCI Analysis -->
+    <div class="card">
+      <div class="card-title">SCI — Software Carbon Intensity (Green Software Foundation)</div>
+
+      <div class="insight-box blue" style="margin-bottom:1.2rem;">
+        <h4>📐 Fórmula SCI (GSF Specification v1)</h4>
+        <p style="font-family:monospace;font-size:0.95rem;margin:0.4rem 0;">
+          <strong id="sci-formula">SCI = ((E_net + E_compute) &times; I + M) / R</strong>
+        </p>
+        <p style="font-size:0.83rem;margin-top:0.5rem;">
+          <strong>E_net</strong> = bytes transferidos &times; 0,001 kWh/GB &nbsp;·&nbsp;
+          <strong>E_compute</strong> = 100 W &times; latência &nbsp;·&nbsp;
+          <strong>I</strong> = <span id="sci-intensity">233</span> gCO₂eq/kWh (Itália 2023, Ember Climate) &nbsp;·&nbsp;
+          <strong>M</strong> = 0,000013 gCO₂eq/req (hardware amortizado) &nbsp;·&nbsp;
+          <strong>R</strong> = 1 request (unidade funcional)
+        </p>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:1.5rem;">
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">SCI Atual vs. Após Aplicar Pattern</div>
+          <div class="chart-container tall">
+            <canvas id="sciCompareChart"></canvas>
+          </div>
+        </div>
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Detalhamento por Pattern</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Avg KB</th>
+                  <th>Lat.</th>
+                  <th>Rede/CPU</th>
+                  <th>SCI atual<br><small>(mgCO₂/req)</small></th>
+                  <th>SCI otim.<br><small>(mgCO₂/req)</small></th>
+                  <th>Redução</th>
+                  <th>CO₂ salvo<br><small>(gCO₂eq)</small></th>
+                </tr>
+              </thead>
+              <tbody id="sciPatternTable"></tbody>
+            </table>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-light);margin-top:0.8rem;">
+            CO₂ salvo = economia por request &times; nº de requests simuladas.
+            Intensidade carbono: Itália 2023 (Ember Climate).
+          </p>
+        </div>
+      </div>
+
+      <!-- Wish Template detail -->
+      <div class="card-title" style="font-size:0.95rem;margin-bottom:0.5rem;">
+        Wish Template — Campos por Chamada e SCI por Template
+      </div>
+      <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
+        Os templates abaixo foram identificados automaticamente a partir dos padrões de uso do parâmetro
+        <code>fields=</code>. Cada template define um conjunto mínimo de campos para um caso de uso
+        específico, eliminando serialização desnecessária no servidor.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Template</th>
+              <th>Campos incluídos</th>
+              <th>Tam. estimado</th>
+              <th>SCI (mgCO₂/req)</th>
+              <th>Requests/período</th>
+              <th>Caso de uso</th>
+            </tr>
+          </thead>
+          <tbody id="wishTemplateTable"></tbody>
+        </table>
+      </div>
+      <div class="insight-box green" style="margin-top:1rem;">
+        <h4>✅ Conclusão Wish Template</h4>
+        <p id="sci-wt-conclusion">
+          Substituir respostas completas por templates pré-definidos reduz o SCI em aproximadamente
+          <strong id="sci-wt-reduction">50%</strong> — de
+          <strong id="sci-wt-baseline">1,53</strong> para
+          <strong id="sci-wt-optimized">0,77</strong> mgCO₂eq por request.
+          O ganho vem principalmente da redução de tempo de processamento no servidor
+          (projeção e serialização), não apenas do tamanho do payload.
+        </p>
+      </div>
+    </div>
+
     <div class="card" style="background: var(--green-dark); color: white; border: none;">
       <div class="card-title" style="color: white; border-bottom-color: rgba(255,255,255,0.2);">Impacto Combinado dos Patterns</div>
       <div class="grid-3" style="text-align: center;">
@@ -1384,6 +1498,71 @@ data.cacheCandidates.forEach((c, i) => {
     </tr>`;
 });
 
+// ── Simulação: tabela de patterns e gráfico de hosts ─────────────────────────
+(function buildSimulation() {
+  const sim = data.simulation;
+  if (!sim) return;
+
+  document.getElementById('sim-total').textContent =
+    sim.total_simulated.toLocaleString('pt-BR');
+
+  // Tabela de patterns
+  const ptbody = document.getElementById('simPatternTable');
+  const patColors = {'Green by Default':'#27ae60','Just Latest Updates':'#3498db',
+                     'Wish List':'#1abc9c','Wish Template':'#9b59b6'};
+  sim.patterns.forEach(p => {
+    const colorKey = Object.keys(patColors).find(k => p.pattern.startsWith(k)) || '';
+    const dot = colorKey
+      ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;
+                      background:${patColors[colorKey]};margin-right:6px;"></span>`
+      : '';
+    ptbody.innerHTML += `
+      <tr>
+        <td style="white-space:nowrap;">${dot}${p.pattern}</td>
+        <td>${p.count.toLocaleString('pt-BR')}</td>
+        <td>${p.pct}%</td>
+        <td>${p.avg_size_kb} KB</td>
+        <td>${p.avg_latency_s}s</td>
+      </tr>`;
+  });
+
+  // Gráfico: avg KB por host
+  new Chart(document.getElementById('simHostSizeChart'), {
+    type: 'bar',
+    data: {
+      labels: sim.host_metrics.map(h => h.host.replace('tourism.','T.').replace('mobility.','M.').replace('.opendatahub','.ODH')),
+      datasets: [{
+        label: 'Tamanho médio (KB)',
+        data: sim.host_metrics.map(h => h.avg_size_kb),
+        backgroundColor: GREENS,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: ctx => sim.host_metrics[ctx[0].dataIndex].host,
+            label: ctx => [
+              ` Avg: ${ctx.raw} KB`,
+              ` Latência: ${sim.host_metrics[ctx.dataIndex].avg_latency_s}s`,
+              ` Requests: ${sim.host_metrics[ctx.dataIndex].count.toLocaleString('pt-BR')}`
+            ]
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v + ' KB' } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+})();
+
 // ── Chart 11: Strategy ────────────────────────────────────────────────────────
 const w = data.duplicateWindowPcts;
 new Chart(document.getElementById('strategyChart'), {
@@ -1457,6 +1636,110 @@ new Chart(document.getElementById('languageChart'), {
     }
   }
 });
+
+// ── SCI: gráfico comparativo e tabelas ───────────────────────────────────────
+(function buildSCI() {
+  const sci = data.sci;
+  if (!sci) return;
+
+  // Update formula constants in DOM
+  document.getElementById('sci-formula').textContent =
+    sci.constants.formula;
+  document.getElementById('sci-intensity').textContent =
+    sci.constants.carbon_intensity_gco2_kwh;
+
+  // Grouped bar chart: baseline vs optimized
+  const patterns = sci.patterns;
+  new Chart(document.getElementById('sciCompareChart'), {
+    type: 'bar',
+    data: {
+      labels: patterns.map(p => p.pattern.replace(' (Sparse Fieldsets)', '').replace(' (Delta)', '')),
+      datasets: [
+        {
+          label: 'SCI Atual (mgCO₂/req)',
+          data: patterns.map(p => p.sci_baseline_mg),
+          backgroundColor: '#e74c3c',
+          borderRadius: 4
+        },
+        {
+          label: 'SCI c/ Pattern (mgCO₂/req)',
+          data: patterns.map(p => p.sci_optimized_mg),
+          backgroundColor: '#27ae60',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            afterLabel: ctx => {
+              const p = patterns[ctx.dataIndex];
+              return ctx.datasetIndex === 0
+                ? ` Payload: ${p.avg_size_kb} KB | Lat: ${p.avg_latency_s}s`
+                : ` Payload: ${p.opt_size_kb} KB | Lat: ${p.opt_latency_s}s`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+        y: {
+          grid: { color: '#f0f0f0' },
+          ticks: { callback: v => v.toFixed(2) + ' mg' },
+          title: { display: true, text: 'mgCO₂eq / request', font: { size: 10 } }
+        }
+      }
+    }
+  });
+
+  // SCI table per pattern
+  const sciTbody = document.getElementById('sciPatternTable');
+  patterns.forEach(p => {
+    const shortName = p.pattern.replace(' (Sparse Fieldsets)', '').replace(' (Delta)', '');
+    sciTbody.innerHTML += `
+      <tr>
+        <td style="white-space:nowrap;font-size:0.82rem;">${shortName}</td>
+        <td>${p.avg_size_kb} KB</td>
+        <td>${p.avg_latency_s}s</td>
+        <td style="font-size:0.78rem;">${p.e_network_pct}% / ${p.e_compute_pct}%</td>
+        <td><strong>${p.sci_baseline_mg}</strong></td>
+        <td><strong style="color:#27ae60;">${p.sci_optimized_mg}</strong></td>
+        <td><span class="badge badge-green">&minus;${p.reduction_pct}%</span></td>
+        <td>${p.savings_g_total}</td>
+      </tr>`;
+  });
+
+  // Wish Template table
+  const wtTbody = document.getElementById('wishTemplateTable');
+  const baseline = patterns.find(p => p.pattern.startsWith('Wish Template'));
+  sci.wish_templates.forEach(t => {
+    const isBaseline = t.name === 'detail_full';
+    const rowStyle = isBaseline ? 'background:#fff5f5;' : '';
+    wtTbody.innerHTML += `
+      <tr style="${rowStyle}">
+        <td><code>${t.name}</code>${isBaseline ? ' <span class="badge badge-orange">atual</span>' : ''}</td>
+        <td style="font-size:0.82rem;">${t.fields.join(', ')}</td>
+        <td>${t.est_size_kb} KB</td>
+        <td><strong style="color:${isBaseline ? '#e74c3c' : '#27ae60'};">${t.sci_mg} mgCO₂</strong></td>
+        <td>${t.requests ? Number(t.requests).toLocaleString('pt-BR') : '—'}</td>
+        <td style="font-size:0.82rem;">${t.use_case}</td>
+      </tr>`;
+  });
+
+  // Update conclusion text
+  if (baseline) {
+    document.getElementById('sci-wt-reduction').textContent =
+      baseline.reduction_pct.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('sci-wt-baseline').textContent =
+      String(baseline.sci_baseline_mg).replace('.', ',');
+    document.getElementById('sci-wt-optimized').textContent =
+      String(baseline.sci_optimized_mg).replace('.', ',');
+  }
+})();
 
 // ── Fecha o bloco fetch ───────────────────────────────────────────────────────
 }).catch(err => console.error('Erro ao carregar dashboard_data.json:', err));

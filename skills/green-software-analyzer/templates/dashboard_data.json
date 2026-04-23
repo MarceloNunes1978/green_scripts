@@ -10023,5 +10023,232 @@
       "estimated_energy_reduction_pct": 55.0,
       "estimated_carbon_footprint_reduction_pct": 52.0
     }
+  },
+  "simulation": {
+    "total_simulated": 296423,
+    "avg_size_kb": 11.7,
+    "avg_latency_s": 0.247,
+    "patterns": [
+      {
+        "pattern": "Green by Default",
+        "count": 281811,
+        "pct": 95.1,
+        "avg_size_kb": 11.5,
+        "avg_latency_s": 0.248
+      },
+      {
+        "pattern": "Just Latest Updates (Delta)",
+        "count": 100146,
+        "pct": 33.8,
+        "avg_size_kb": 14.4,
+        "avg_latency_s": 0.218
+      },
+      {
+        "pattern": "Wish List (Sparse Fieldsets)",
+        "count": 17246,
+        "pct": 5.8,
+        "avg_size_kb": 177.3,
+        "avg_latency_s": 0.45
+      },
+      {
+        "pattern": "Wish Template",
+        "count": 283107,
+        "pct": 95.5,
+        "avg_size_kb": 12.2,
+        "avg_latency_s": 0.234
+      }
+    ],
+    "host_metrics": [
+      {
+        "host": "mobility.api.opendatahub.com",
+        "count": 151137,
+        "avg_size_kb": 7.3,
+        "avg_latency_s": 0.222
+      },
+      {
+        "host": "tourism.api.opendatahub.com",
+        "count": 123442,
+        "avg_size_kb": 12.5,
+        "avg_latency_s": 0.226
+      },
+      {
+        "host": "tourism.opendatahub.bz.it",
+        "count": 18242,
+        "avg_size_kb": 34.9,
+        "avg_latency_s": 0.589
+      },
+      {
+        "host": "tourism.opendatahub.com",
+        "count": 2952,
+        "avg_size_kb": 11.7,
+        "avg_latency_s": 0.278
+      },
+      {
+        "host": "mobility.api.opendatahub.bz.it",
+        "count": 596,
+        "avg_size_kb": 183.1,
+        "avg_latency_s": 0.657
+      },
+      {
+        "host": "tourism.api.opendatahub.bz.it",
+        "count": 54,
+        "avg_size_kb": 571.3,
+        "avg_latency_s": 0.49
+      }
+    ]
+  },
+  "sci": {
+    "constants": {
+      "carbon_intensity_gco2_kwh": 233,
+      "network_energy_kwh_per_gb": 0.001,
+      "server_power_kw": 0.1,
+      "embodied_gco2_per_request": 1.3e-05,
+      "functional_unit": "1 API request",
+      "formula": "SCI = ((E_net + E_compute) × I + M) / R"
+    },
+    "patterns": [
+      {
+        "pattern": "Green by Default",
+        "count": 281811,
+        "avg_size_kb": 11.5,
+        "avg_latency_s": 0.248,
+        "sci_baseline_mg": 1.6209,
+        "sci_optimized_mg": 1.1377,
+        "reduction_pct": 29.8,
+        "savings_g_total": 136.17,
+        "e_network_pct": 0.2,
+        "e_compute_pct": 99.8,
+        "opt_size_kb": 4.6,
+        "opt_latency_s": 0.174,
+        "optimization": "Remover limit=-1, exigir pagesize ≤ 100"
+      },
+      {
+        "pattern": "Just Latest Updates (Delta)",
+        "count": 100146,
+        "avg_size_kb": 14.4,
+        "avg_latency_s": 0.218,
+        "sci_baseline_mg": 1.4274,
+        "sci_optimized_mg": 0.8606,
+        "reduction_pct": 39.7,
+        "savings_g_total": 56.76,
+        "e_network_pct": 0.2,
+        "e_compute_pct": 99.8,
+        "opt_size_kb": 4.3,
+        "opt_latency_s": 0.131,
+        "optimization": "Enviar apenas campos alterados (delta)"
+      },
+      {
+        "pattern": "Wish List (Sparse Fieldsets)",
+        "count": 17246,
+        "avg_size_kb": 177.3,
+        "avg_latency_s": 0.45,
+        "sci_baseline_mg": 2.9678,
+        "sci_optimized_mg": 2.0687,
+        "reduction_pct": 30.3,
+        "savings_g_total": 15.51,
+        "e_network_pct": 1.4,
+        "e_compute_pct": 98.6,
+        "opt_size_kb": 70.9,
+        "opt_latency_s": 0.315,
+        "optimization": "Forçar uso de fields= em todos os clientes"
+      },
+      {
+        "pattern": "Wish Template",
+        "count": 283107,
+        "avg_size_kb": 12.2,
+        "avg_latency_s": 0.234,
+        "sci_baseline_mg": 1.5304,
+        "sci_optimized_mg": 0.7706,
+        "reduction_pct": 49.6,
+        "savings_g_total": 215.1,
+        "e_network_pct": 0.2,
+        "e_compute_pct": 99.8,
+        "opt_size_kb": 1.5,
+        "opt_latency_s": 0.117,
+        "optimization": "Templates pré-definidos (summary, map_view, detail_full)"
+      }
+    ],
+    "total_savings_g": 423.5,
+    "wish_templates": [
+      {
+        "name": "listing_de",
+        "fields": [
+          "Id",
+          "Detail.de.Title",
+          "ContactInfos.de.City"
+        ],
+        "requests": 79349,
+        "est_size_kb": 0.5,
+        "use_case": "Listagem turismo (DE)",
+        "sci_mg": 0.7704
+      },
+      {
+        "name": "accommodation_de",
+        "fields": [
+          "Id",
+          "AccoDetail.de.Name",
+          "AccoDetail.de.City"
+        ],
+        "requests": 79235,
+        "est_size_kb": 0.4,
+        "use_case": "Listagem alojamento (DE)",
+        "sci_mg": 0.7703
+      },
+      {
+        "name": "listing_it",
+        "fields": [
+          "Id",
+          "Detail.it.Title",
+          "ContactInfos.it.City"
+        ],
+        "requests": 63006,
+        "est_size_kb": 0.5,
+        "use_case": "Listagem turismo (IT)",
+        "sci_mg": 0.7704
+      },
+      {
+        "name": "accommodation_it",
+        "fields": [
+          "Id",
+          "AccoDetail.it.Name",
+          "AccoDetail.it.City"
+        ],
+        "requests": 62925,
+        "est_size_kb": 0.4,
+        "use_case": "Listagem alojamento (IT)",
+        "sci_mg": 0.7703
+      },
+      {
+        "name": "booking",
+        "fields": [
+          "Id",
+          "MssResponseShort"
+        ],
+        "requests": 16133,
+        "est_size_kb": 1.0,
+        "use_case": "Disponibilidade para reserva",
+        "sci_mg": 0.7705
+      },
+      {
+        "name": "id_only",
+        "fields": [
+          "Id"
+        ],
+        "requests": 79811,
+        "est_size_kb": 0.1,
+        "use_case": "Lookup por ID",
+        "sci_mg": 0.7703
+      },
+      {
+        "name": "detail_full",
+        "fields": [
+          "(todos os campos)"
+        ],
+        "requests": null,
+        "est_size_kb": 12.2,
+        "use_case": "Página de detalhe completa",
+        "sci_mg": 0.7732
+      }
+    ]
   }
 }
