@@ -1,22 +1,27 @@
 import pandas as pd
-import requests
 import sqlite3
 import time
-import json
+import asyncio
+import aiohttp
+import threading
 from datetime import datetime
 import re
-from urllib.parse import urlparse, parse_qs
 import os
+import argparse
 
 # Configurations
 CSV_LOGS = '../../../logs/unified_logs.csv'
 DB_NAME = 'green_software_metrics_en.db'
-SAMPLE_SIZE = 100  # Increased for better sampling
-TIMEOUT = 10      # Timeout for requests
+CHECKPOINT_FILE = 'progress_checkpoint.txt'
+TIMEOUT = 10
+WORKERS = 20          # concurrent async workers
+BATCH_SIZE = 500      # DB commit batch size
+MAX_BODY_SIZE = 2048  # truncate response body to 2KB
 
-def setup_database():
-    """Initializes the SQLite database with new columns"""
-    conn = sqlite3.connect(DB_NAME)
+db_lock = threading.Lock()
+
+
+def setup_database(conn):
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS api_metrics (
@@ -30,137 +35,178 @@ def setup_database():
             latency_seconds REAL,
             method TEXT,
             content_type TEXT,
-            request_body TEXT,  -- New: request body (empty for GET)
-            response_body TEXT, -- New: response body
-            applicable_pattern TEXT -- New: applicable green software design pattern
+            request_body TEXT,
+            response_body TEXT,
+            applicable_pattern TEXT
         )
     ''')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_host_uri ON api_metrics(host, uri)')
     conn.commit()
-    return conn
+
+
+def load_checkpoint():
+    if os.path.exists(CHECKPOINT_FILE):
+        with open(CHECKPOINT_FILE) as f:
+            return int(f.read().strip())
+    return 0
+
+
+def save_checkpoint(count):
+    with open(CHECKPOINT_FILE, 'w') as f:
+        f.write(str(count))
+
 
 def classify_pattern(uri, response_body_str):
-    """Classifies the request/response into one or more Green Software design patterns"""
     patterns = []
 
-    # 1. Green by Default
-    # Prioritizes removing limit=-1, then adding pagination and fields
     if 'limit=-1' in uri:
         patterns.append('Green by Default (limit=-1)')
     elif not re.search(r'pagesize|pagenumber|limit=', uri, re.IGNORECASE):
         patterns.append('Green by Default (no pagination)')
-    elif not 'fields=' in uri:
+    elif 'fields=' not in uri:
         patterns.append('Green by Default (no fields)')
 
-    # 2. Just Latest Updates (Delta)
-    # Candidates: URIs that appear to be real-time or frequently updated data
-    # Ex: Weather, Realtime, Status, Latest, Forecast, GetbyRoomBooked
     if re.search(r'weather|realtime|status|latest|forecast|getbyroombooked', uri, re.IGNORECASE):
         patterns.append('Just Latest Updates (Delta)')
 
-    # 3. Wish List (Sparse Fieldsets)
-    # Applicable if 'fields=' was not used, but the response_body is large and JSON (potential for field selection)
     if 'fields=' not in uri and response_body_str and len(response_body_str) > 500 and response_body_str.strip().startswith(('{', '[')):
         patterns.append('Wish List (Sparse Fieldsets)')
 
-    # 4. Wish Template
-    # Applicable to endpoints with complex URIs or that return a lot of data, where a template would simplify
-    # Ex: Endpoints with many parameters, or that are already Wish List candidates
     if len(uri) > 80 or 'Wish List (Sparse Fieldsets)' in patterns:
         patterns.append('Wish Template')
 
     return ', '.join(patterns) if patterns else 'None specific'
 
-def measure_request(host, uri):
-    """Performs the request and measures sizes and latency, capturing the response body"""
+
+async def measure_request_async(session, host, uri):
     url = f"https://{host}{uri}"
     method = "GET"
-    request_body = "" # For GET, the request body is empty
-    
-    # Estimate request size (basic headers + URL)
     request_headers_size = len(f"{method} {uri} HTTP/1.1\r\nHost: {host}\r\n".encode('utf-8'))
-    
+
     start_time = time.time()
     try:
-        response = requests.get(url, timeout=TIMEOUT, stream=True, verify=False)
-        latency = time.time() - start_time
-        
-        response_body_bytes = response.content
-        response_body_str = response_body_bytes.decode('utf-8', errors='ignore')
-        
-        response_headers_size = len(str(response.headers).encode('utf-8'))
-        total_response_size = len(response_body_bytes) + response_headers_size
-        
-        return {
-            'status_code': response.status_code,
-            'request_size': request_headers_size,
-            'response_size': total_response_size,
-            'latency': latency,
-            'method': method,
-            'content_type': response.headers.get('Content-Type', 'unknown'),
-            'request_body': request_body,
-            'response_body': response_body_str,
-            'applicable_pattern': classify_pattern(uri, response_body_str)
-        }
-    except requests.exceptions.RequestException as e:
-        print(f"Error accessing {url}: {e}")
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=TIMEOUT), ssl=False) as response:
+            latency = time.time() - start_time
+            body_bytes = await response.read()
+            response_body_str = body_bytes.decode('utf-8', errors='ignore')[:MAX_BODY_SIZE]
+            response_headers_size = sum(len(k) + len(v) + 4 for k, v in response.headers.items())
+            total_response_size = len(body_bytes) + response_headers_size
+
+            return {
+                'status_code': response.status,
+                'request_size': request_headers_size,
+                'response_size': total_response_size,
+                'latency': latency,
+                'method': method,
+                'content_type': response.headers.get('Content-Type', 'unknown'),
+                'request_body': '',
+                'response_body': response_body_str,
+                'applicable_pattern': classify_pattern(uri, response_body_str)
+            }
+    except Exception:
         return None
 
-def main():
-    print(f"🚀 Starting traffic simulation based on {CSV_LOGS}")
-    
-    # Load logs
-    df = pd.read_csv(CSV_LOGS)
-    df.columns = ['timestamp', 'host', 'uri']
-    
-    # Get a sample for testing
-    sample = df.head(SAMPLE_SIZE)
-    
-    # Setup DB
-    conn = setup_database()
-    cursor = conn.cursor()
-    
-    results_count = 0
-    
-    for index, row in sample.iterrows():
-        host = row['host']
-        uri = row['uri']
-        
-        print(f"[{index+1}/{SAMPLE_SIZE}] Calling: {host}{uri[:50]}...")
-        
-        metrics = measure_request(host, uri)
-        
+
+async def worker(semaphore, session, host, uri, results, idx, total):
+    async with semaphore:
+        metrics = await measure_request_async(session, host, uri)
+        if idx % 1000 == 0:
+            pct = idx / total * 100
+            print(f"  [{idx:,}/{total:,}] {pct:.1f}% — {host}{uri[:40]}...")
         if metrics:
-            cursor.execute('''
-                INSERT INTO api_metrics 
-                (timestamp, host, uri, status_code, request_size_bytes, response_size_bytes, latency_seconds, method, content_type, request_body, response_body, applicable_pattern)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                datetime.now().isoformat(),
-                host,
-                uri,
-                metrics['status_code'],
-                metrics['request_size'],
-                metrics['response_size'],
-                metrics['latency'],
-                metrics['method'],
-                metrics['content_type'],
-                metrics['request_body'],
-                metrics['response_body'],
-                metrics['applicable_pattern']
+            results.append((
+                datetime.now().isoformat(), host, uri,
+                metrics['status_code'], metrics['request_size'], metrics['response_size'],
+                metrics['latency'], metrics['method'], metrics['content_type'],
+                metrics['request_body'], metrics['response_body'], metrics['applicable_pattern']
             ))
-            conn.commit()
-            results_count += 1
-            
-        # Small delay to avoid overloading the API during testing
-        time.sleep(0.2)
-    
+
+
+def flush_batch(conn, rows):
+    cursor = conn.cursor()
+    cursor.executemany('''
+        INSERT INTO api_metrics
+        (timestamp, host, uri, status_code, request_size_bytes, response_size_bytes,
+         latency_seconds, method, content_type, request_body, response_body, applicable_pattern)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', rows)
+    conn.commit()
+
+
+async def run_all(unique_df, conn, start_from):
+    total = len(unique_df)
+    processed = start_from
+    semaphore = asyncio.Semaphore(WORKERS)
+
+    connector = aiohttp.TCPConnector(limit=WORKERS, ssl=False)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        tasks = []
+        results = []
+
+        for idx, (_, row) in enumerate(unique_df.iloc[start_from:].iterrows(), start=start_from + 1):
+            task = asyncio.create_task(worker(semaphore, session, row['host'], row['uri'], results, idx, total))
+            tasks.append(task)
+
+            if len(tasks) >= BATCH_SIZE:
+                await asyncio.gather(*tasks)
+                flush_batch(conn, results)
+                processed += len(results)
+                save_checkpoint(processed)
+                print(f"Batch committed: {processed:,}/{total:,} ({processed/total*100:.1f}%)")
+                tasks.clear()
+                results.clear()
+
+        if tasks:
+            await asyncio.gather(*tasks)
+            flush_batch(conn, results)
+            processed += len(results)
+            save_checkpoint(processed)
+
+    return processed
+
+
+def main(reset=False):
+    global CHECKPOINT_FILE
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(script_dir, CSV_LOGS)
+    db_path = os.path.join(script_dir, DB_NAME)
+    checkpoint_path = os.path.join(script_dir, CHECKPOINT_FILE)
+    CHECKPOINT_FILE = checkpoint_path
+
+    if reset:
+        for f in [db_path, checkpoint_path]:
+            if os.path.exists(f):
+                os.remove(f)
+                print(f"Removed: {f}")
+
+    print(f"Loading {csv_path}...")
+    df = pd.read_csv(csv_path)
+    df.columns = ['timestamp', 'host', 'uri']
+
+    unique_df = df.drop_duplicates(subset=['host', 'uri']).reset_index(drop=True)
+    total = len(unique_df)
+    print(f"Total unique URIs: {total:,} (reduced from {len(df):,})")
+
+    start_from = load_checkpoint()
+    if start_from > 0:
+        print(f"Resuming from checkpoint: {start_from:,}/{total:,}")
+
+    conn = sqlite3.connect(db_path)
+    setup_database(conn)
+
+    t_start = time.time()
+    processed = asyncio.run(run_all(unique_df, conn, start_from))
+    elapsed = time.time() - t_start
+
     conn.close()
-    print(f"\n✅ Simulation completed!")
-    print(f"📊 {results_count} records stored in '{DB_NAME}'")
+    print(f"\nCompleted! {processed:,} records in {elapsed/60:.1f} min stored in '{db_path}'")
+
+    if os.path.exists(checkpoint_path):
+        os.remove(checkpoint_path)
+
 
 if __name__ == "__main__":
-    # Remove old DB if it exists to recreate with new schema
-    if os.path.exists(DB_NAME):
-        os.remove(DB_NAME)
-        print(f"Existing database file '{DB_NAME}' removed.")
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--reset', action='store_true', help='Delete existing DB and restart')
+    args = parser.parse_args()
+    main(reset=args.reset)
