@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Green Software — Análise de Logs OpenDataHub</title>
+  <title>Green Software — OpenDataHub Log Analysis</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
@@ -434,85 +434,86 @@
 <!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
 <header>
   <div class="header-badge">🌿 Green Software Analysis</div>
-  <h1>Análise de Logs — OpenDataHub</h1>
-  <p>Padrões de uso, eficiência energética e oportunidades de redução de requests/responses entre atores</p>
+  <h1>Log Analysis — OpenDataHub</h1>
+  <p>Usage patterns, energy efficiency and request/response reduction opportunities between actors</p>
   <div class="header-meta">
-    <span>📅 <span id="meta-period">24 de Março de 2025 — 16h00 às 23h59</span></span>
-    <span>⏱ <span id="meta-duration">480</span> minutos de dados</span>
-    <span>📊 <span id="meta-total">208.171</span> requests analisadas</span>
-    <span>🖥 <span id="meta-hosts">6</span> hosts monitorados</span>
+    <span>📅 <span id="meta-period">March 24, 2025 — 4:00 PM to 11:59 PM</span></span>
+    <span>⏱ <span id="meta-duration">480</span> minutes of data</span>
+    <span>📊 <span id="meta-total">208.171</span> analyzed requests</span>
+    <span>🖥 <span id="meta-hosts">6</span> monitored hosts</span>
   </div>
 </header>
 
 <!-- ═══════════════════════════ NAV ═══════════════════════════ -->
 <nav>
   <ul>
-    <li><a href="#visao-geral" class="active">Visão Geral</a></li>
-    <li><a href="#atores">Atores</a></li>
-    <li><a href="#temporal">Análise Temporal</a></li>
-    <li><a href="#categorias">Categorias</a></li>
-    <li><a href="#duplicatas">Duplicatas</a></li>
-    <li><a href="#cache">Potencial de Cache</a></li>
+    <li><a href="#visao-geral" class="active">Overview</a></li>
+    <li><a href="#atores">Actors</a></li>
+    <li><a href="#temporal">Temporal Analysis</a></li>
+    <li><a href="#categorias">Categories</a></li>
+    <li><a href="#duplicatas">Duplicates</a></li>
+    <li><a href="#cache">Cache Potential</a></li>
     <li><a href="#design-patterns">Design Patterns</a></li>
-    <li><a href="#recomendacoes">Recomendações</a></li>
+    <li><a href="#parametros">Parameters</a></li>
+    <li><a href="#recomendacoes">Recommendations</a></li>
   </ul>
 </nav>
 
 <!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
 <main>
 
-  <!-- ── VISÃO GERAL ── -->
+  <!-- ── OVERVIEW ── -->
   <section id="visao-geral">
-    <div class="section-title">Visão Geral</div>
-    <p class="section-desc">Resumo executivo das métricas principais extraídas dos logs de 8 horas da plataforma OpenDataHub.</p>
+    <div class="section-title">Overview</div>
+    <p class="section-desc">Executive summary of the main metrics extracted from 8 hours of OpenDataHub platform logs.</p>
 
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-icon">📨</div>
         <div class="kpi-value" id="kpi-total">208.171</div>
-        <div class="kpi-label">Total de Requests</div>
-        <div class="kpi-sub" id="kpi-total-sub">~434 req/min em média</div>
+        <div class="kpi-label">Total Requests</div>
+        <div class="kpi-sub" id="kpi-total-sub">~434 req/min average</div>
       </div>
       <div class="kpi-card danger">
         <div class="kpi-icon">♻️</div>
         <div class="kpi-value" id="kpi-dup-pct">61,3%</div>
-        <div class="kpi-label">Requests Duplicadas (60s)</div>
-        <div class="kpi-sub danger" id="kpi-dup-count">127.677 requests evitáveis</div>
+        <div class="kpi-label">Duplicate Requests (60s)</div>
+        <div class="kpi-sub danger" id="kpi-dup-count">127,677 avoidable requests</div>
       </div>
       <div class="kpi-card warn">
         <div class="kpi-icon">⚡</div>
         <div class="kpi-value" id="kpi-heavy-pct">7,4%</div>
         <div class="kpi-label">Heavy Queries (limit=-1)</div>
-        <div class="kpi-sub warn" id="kpi-heavy-count">15.498 queries sem paginação</div>
+        <div class="kpi-sub warn" id="kpi-heavy-count">15,498 queries without pagination</div>
       </div>
       <div class="kpi-card blue">
         <div class="kpi-icon">🗂</div>
         <div class="kpi-value" id="kpi-endpoints">5.902</div>
-        <div class="kpi-label">Endpoints Únicos</div>
-        <div class="kpi-sub" id="kpi-uris">43.909 URIs distintas</div>
+        <div class="kpi-label">Unique Endpoints</div>
+        <div class="kpi-sub" id="kpi-uris">43,909 distinct URIs</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">🌐</div>
         <div class="kpi-value" id="kpi-hosts">6</div>
-        <div class="kpi-label">Hosts (Atores)</div>
-        <div class="kpi-sub">Turismo + Mobilidade</div>
+        <div class="kpi-label">Hosts (Actors)</div>
+        <div class="kpi-sub">Tourism + Mobility</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">🔄</div>
         <div class="kpi-value" id="kpi-rps">14,5</div>
-        <div class="kpi-label">Req/segundo (média)</div>
-        <div class="kpi-sub" id="kpi-rps-peak">Pico: 108 req/s</div>
+        <div class="kpi-label">Req/second (average)</div>
+        <div class="kpi-sub" id="kpi-rps-peak">Peak: 108 req/s</div>
       </div>
       <div class="kpi-card warn">
         <div class="kpi-icon">📄</div>
         <div class="kpi-value" id="kpi-pag-pct">58,0%</div>
-        <div class="kpi-label">Requests com Paginação</div>
-        <div class="kpi-sub warn" id="kpi-pag-count">120.740 com pagesize/pagenumber</div>
+        <div class="kpi-label">Paginated Requests</div>
+        <div class="kpi-sub warn" id="kpi-pag-count">120,740 with pagesize/pagenumber</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">🌍</div>
         <div class="kpi-value" id="kpi-langs">9</div>
-        <div class="kpi-label">Idiomas Detectados</div>
+        <div class="kpi-label">Detected Languages</div>
         <div class="kpi-sub" id="kpi-langs-sub">DE (31%) · IT (19%) · EN (6%)</div>
       </div>
     </div>
@@ -520,38 +521,38 @@
     <!-- Insight boxes -->
     <div class="insight-grid">
       <div class="insight-box red">
-        <h4>🚨 Problema Crítico</h4>
-        <p>Mais de <strong>61% das requests são duplicadas</strong> em janelas de 60 segundos — requests idênticas (mesmo host + URI) sendo repetidas sem necessidade. Isso representa desperdício direto de energia e processamento.</p>
+        <h4>🚨 Critical Issue</h4>
+        <p>Over <strong>61% of requests are duplicated</strong> within 60-second windows — identical requests (same host + URI) being repeated unnecessarily. This represents direct waste of energy and processing.</p>
       </div>
       <div class="insight-box orange">
-        <h4>⚠️ Heavy Queries sem Controle</h4>
-        <p><strong>15.498 requests usam limit=-1</strong>, retornando todos os registros sem paginação. Concentradas nos hosts de mobilidade, essas queries consomem banda e CPU desproporcionalmente.</p>
+        <h4>⚠️ Uncontrolled Heavy Queries</h4>
+        <p><strong>15,498 requests use limit=-1</strong>, returning all records without pagination. Concentrated on mobility hosts, these queries consume bandwidth and CPU disproportionately.</p>
       </div>
       <div class="insight-box green">
-        <h4>✅ Alto Potencial de Cache</h4>
-        <p>Endpoints como <strong>/v1/STA/Accommodation</strong> (44.936 requests, apenas 27 URIs únicas) têm ratio de cache de 1.664x — cada URI única é chamada em média 1.664 vezes no período.</p>
+        <h4>✅ High Cache Potential</h4>
+        <p>Endpoints like <strong>/v1/STA/Accommodation</strong> (44,936 requests, only 27 unique URIs) have a cache ratio of 1,664x — each unique URI is called on average 1,664 times in the period.</p>
       </div>
       <div class="insight-box blue">
-        <h4>💡 Oportunidade de Consolidação</h4>
-        <p>Existem <strong>6 hosts distintos</strong> servindo dados sobrepostos (tourism.opendatahub.bz.it + tourism.api.opendatahub.com + tourism.opendatahub.com). Consolidação reduziria overhead de DNS e conexões.</p>
+        <h4>💡 Consolidation Opportunity</h4>
+        <p>There are <strong>6 distinct hosts</strong> serving overlapping data (tourism.opendatahub.bz.it + tourism.api.opendatahub.com + tourism.opendatahub.com). Consolidation would reduce DNS and connection overhead.</p>
       </div>
     </div>
   </section>
 
-  <!-- ── ATORES ── -->
+  <!-- ── ACTORS ── -->
   <section id="atores">
-    <div class="section-title">Distribuição por Atores (Hosts)</div>
-    <p class="section-desc">Análise do volume de requests por host, identificando os principais consumidores da infraestrutura.</p>
+    <div class="section-title">Distribution by Actors (Hosts)</div>
+    <p class="section-desc">Analysis of request volume by host, identifying the main consumers of the infrastructure.</p>
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Volume de Requests por Host</div>
+        <div class="card-title">Request Volume by Host</div>
         <div class="chart-container tall">
           <canvas id="hostChart"></canvas>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Participação Percentual por Host</div>
+        <div class="card-title">Percentage Share by Host</div>
         <div class="chart-container tall">
           <canvas id="hostPieChart"></canvas>
         </div>
@@ -559,17 +560,17 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Detalhamento por Host</div>
+      <div class="card-title">Host Details</div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>#</th>
               <th>Host</th>
-              <th>Tipo</th>
+              <th>Type</th>
               <th>Requests</th>
-              <th>Participação</th>
-              <th>Req/min (média)</th>
+              <th>Share</th>
+              <th>Req/min (avg)</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -580,8 +581,8 @@
 
     <!-- Origins -->
     <div class="card">
-      <div class="card-title">Origens Identificadas (Web Components)</div>
-      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1rem;">16 origens distintas identificadas via parâmetro <code>origin=</code> nas URIs, representando os clientes/consumidores da API.</p>
+      <div class="card-title">Identified Origins (Web Components)</div>
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1rem;">16 distinct origins identified via <code>origin=</code> parameter in URIs, representing API clients/consumers.</p>
       <div class="chart-container medium">
         <canvas id="originsChart"></canvas>
       </div>
@@ -590,11 +591,11 @@
 
   <!-- ── TEMPORAL ── -->
   <section id="temporal">
-    <div class="section-title">Análise Temporal</div>
-    <p class="section-desc">Distribuição das requests ao longo do tempo, identificando padrões de carga e horários de pico.</p>
+    <div class="section-title">Temporal Analysis</div>
+    <p class="section-desc">Distribution of requests over time, identifying load patterns and peak hours.</p>
 
     <div class="card">
-      <div class="card-title">Requests por Minuto (16h00 – 23h59)</div>
+      <div class="card-title">Requests per Minute (4:00 PM – 11:59 PM)</div>
       <div class="chart-container tall">
         <canvas id="timelineChart"></canvas>
       </div>
@@ -602,18 +603,18 @@
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Estatísticas de Throughput</div>
+        <div class="card-title">Throughput Statistics</div>
         <div style="padding:0.5rem 0;">
           <div class="progress-row">
-            <div class="progress-label"><strong>Média</strong><span>434 req/min</span></div>
+            <div class="progress-label"><strong>Average</strong><span>434 req/min</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:40%;background:#27ae60"></div></div>
           </div>
           <div class="progress-row">
-            <div class="progress-label"><strong>Mediana</strong><span>~420 req/min</span></div>
+            <div class="progress-label"><strong>Median</strong><span>~420 req/min</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:38%;background:#1abc9c"></div></div>
           </div>
           <div class="progress-row">
-            <div class="progress-label"><strong>Pico máximo</strong><span>~6.480 req/min (108/s)</span></div>
+            <div class="progress-label"><strong>Peak maximum</strong><span>~6,480 req/min (108/s)</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:100%;background:#e74c3c"></div></div>
           </div>
           <div class="progress-row">
@@ -622,12 +623,12 @@
           </div>
         </div>
         <div class="insight-box orange" style="margin-top:1rem;">
-          <h4>⚠️ Picos de Carga</h4>
-          <p>O pico de <strong>108 req/s</strong> é 7,4x acima da média. Isso sugere comportamento de polling agressivo por parte de alguns clientes, sem backoff exponencial.</p>
+          <h4>⚠️ Load Peaks</h4>
+          <p>The peak of <strong>108 req/s</strong> is 7.4x above average. This suggests aggressive polling behavior by some clients, without exponential backoff.</p>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Distribuição por Hora do Dia</div>
+        <div class="card-title">Distribution by Hour of Day</div>
         <div class="chart-container medium">
           <canvas id="hourlyChart"></canvas>
         </div>
@@ -635,20 +636,20 @@
     </div>
   </section>
 
-  <!-- ── CATEGORIAS ── -->
+  <!-- ── CATEGORIES ── -->
   <section id="categorias">
-    <div class="section-title">Análise por Categoria de API</div>
-    <p class="section-desc">Classificação das requests por domínio funcional, revelando quais áreas geram maior carga.</p>
+    <div class="section-title">Analysis by API Category</div>
+    <p class="section-desc">Classification of requests by functional domain, revealing which areas generate the most load.</p>
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Distribuição por Categoria</div>
+        <div class="card-title">Distribution by Category</div>
         <div class="chart-container tall">
           <canvas id="categoryChart"></canvas>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Top 10 Endpoints por Volume</div>
+        <div class="card-title">Top 10 Endpoints by Volume</div>
         <div class="chart-container tall">
           <canvas id="topEndpointsChart"></canvas>
         </div>
@@ -656,61 +657,61 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Distribuição por Idioma das Requests</div>
-      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1rem;">39,8% das requests não especificam idioma. Alemão (DE) é o idioma mais solicitado, refletindo a região do Alto Adige/Südtirol.</p>
+      <div class="card-title">Distribution by Request Language</div>
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1rem;">39.8% of requests do not specify a language. German (DE) is the most requested, reflecting the Alto Adige/Südtirol region.</p>
       <div class="chart-container medium">
         <canvas id="languageChart"></canvas>
       </div>
     </div>
   </section>
 
-  <!-- ── DUPLICATAS ── -->
+  <!-- ── DUPLICATES ── -->
   <section id="duplicatas">
-    <div class="section-title">Análise de Requests Duplicadas</div>
-    <p class="section-desc">Identificação de requests idênticas (mesmo host + URI) repetidas em janelas de tempo — principal oportunidade de redução de tráfego.</p>
+    <div class="section-title">Duplicate Request Analysis</div>
+    <p class="section-desc">Identification of identical requests (same host + URI) repeated within time windows — main opportunity for traffic reduction.</p>
 
     <div class="kpi-grid" style="grid-template-columns: repeat(5, 1fr);">
       <div class="kpi-card danger">
         <div class="kpi-icon">⏱</div>
         <div class="kpi-value">29,6%</div>
-        <div class="kpi-label">Duplicatas em 1s</div>
-        <div class="kpi-sub danger">61.660 requests</div>
+        <div class="kpi-label">Duplicates in 1s</div>
+        <div class="kpi-sub danger">61,660 requests</div>
       </div>
       <div class="kpi-card danger">
         <div class="kpi-icon">⏱</div>
         <div class="kpi-value">43,1%</div>
-        <div class="kpi-label">Duplicatas em 5s</div>
-        <div class="kpi-sub danger">89.769 requests</div>
+        <div class="kpi-label">Duplicates in 5s</div>
+        <div class="kpi-sub danger">89,769 requests</div>
       </div>
       <div class="kpi-card danger">
         <div class="kpi-icon">⏱</div>
         <div class="kpi-value">48,2%</div>
-        <div class="kpi-label">Duplicatas em 10s</div>
-        <div class="kpi-sub danger">100.300 requests</div>
+        <div class="kpi-label">Duplicates in 10s</div>
+        <div class="kpi-sub danger">100,300 requests</div>
       </div>
       <div class="kpi-card danger">
         <div class="kpi-icon">⏱</div>
         <div class="kpi-value">56,9%</div>
-        <div class="kpi-label">Duplicatas em 30s</div>
-        <div class="kpi-sub danger">118.378 requests</div>
+        <div class="kpi-label">Duplicates in 30s</div>
+        <div class="kpi-sub danger">118,378 requests</div>
       </div>
       <div class="kpi-card danger">
         <div class="kpi-icon">⏱</div>
         <div class="kpi-value">61,3%</div>
-        <div class="kpi-label">Duplicatas em 60s</div>
-        <div class="kpi-sub danger">127.677 requests</div>
+        <div class="kpi-label">Duplicates in 60s</div>
+        <div class="kpi-sub danger">127,677 requests</div>
       </div>
     </div>
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Requests Duplicadas por Janela de Tempo</div>
+        <div class="card-title">Duplicate Requests by Time Window</div>
         <div class="chart-container tall">
           <canvas id="duplicateChart"></canvas>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Impacto das Duplicatas no Total</div>
+        <div class="card-title">Impact of Duplicates on Total</div>
         <div class="chart-container tall">
           <canvas id="duplicateImpactChart"></canvas>
         </div>
@@ -719,44 +720,44 @@
 
     <div class="insight-grid">
       <div class="insight-box red">
-        <h4>🔴 Polling Agressivo Detectado</h4>
-        <p>29,6% das requests são idênticas a uma request anterior feita <strong>no mesmo segundo</strong>. Isso indica múltiplos clientes fazendo polling simultâneo sem coordenação ou debounce.</p>
+        <h4>🔴 Aggressive Polling Detected</h4>
+        <p>29.6% of requests are identical to a previous request made <strong>in the same second</strong>. This indicates multiple clients doing simultaneous polling without coordination or debounce.</p>
       </div>
       <div class="insight-box orange">
-        <h4>🟠 Ausência de Cache no Cliente</h4>
-        <p>43,1% das requests são duplicatas em janela de 5 segundos. Nenhum mecanismo de cache client-side (ETag, Cache-Control, stale-while-revalidate) parece estar em uso.</p>
+        <h4>🟠 No Client-Side Cache</h4>
+        <p>43.1% of requests are duplicates within a 5-second window. No client-side caching mechanism (ETag, Cache-Control, stale-while-revalidate) appears to be in use.</p>
       </div>
       <div class="insight-box green">
-        <h4>🟢 Potencial de Economia</h4>
-        <p>Com cache de apenas <strong>60 segundos de TTL</strong>, seria possível eliminar até <strong>127.677 requests</strong> (61,3%), reduzindo proporcionalmente o consumo de CPU, banda e energia.</p>
+        <h4>🟢 Savings Potential</h4>
+        <p>With just a <strong>60-second TTL cache</strong>, it would be possible to eliminate up to <strong>127,677 requests</strong> (61.3%), proportionally reducing CPU, bandwidth and energy consumption.</p>
       </div>
     </div>
   </section>
 
   <!-- ── CACHE ── -->
   <section id="cache">
-    <div class="section-title">Potencial de Cache por Endpoint</div>
-    <p class="section-desc">Endpoints com alta frequência e baixa variação de parâmetros são candidatos ideais para caching, pois a mesma resposta pode ser reutilizada múltiplas vezes.</p>
+    <div class="section-title">Cache Potential by Endpoint</div>
+    <p class="section-desc">Endpoints with high frequency and low parameter variation are ideal candidates for caching, as the same response can be reused multiple times.</p>
 
     <div class="card">
-      <div class="card-title">Top Endpoints por Ratio de Cacheabilidade (Requests / URIs Únicas)</div>
+      <div class="card-title">Top Endpoints by Cacheability Ratio (Requests / Unique URIs)</div>
       <div class="chart-container tall">
         <canvas id="cacheChart"></canvas>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Detalhamento dos Candidatos a Cache</div>
+      <div class="card-title">Cache Candidate Details</div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Endpoint</th>
               <th>Total Requests</th>
-              <th>URIs Únicas</th>
-              <th>Ratio de Cache</th>
-              <th>Economia Estimada</th>
-              <th>Prioridade</th>
+              <th>Unique URIs</th>
+              <th>Cache Ratio</th>
+              <th>Estimated Savings</th>
+              <th>Priority</th>
             </tr>
           </thead>
           <tbody id="cacheTableBody"></tbody>
@@ -765,7 +766,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Potencial de Redução por Estratégia Green Software</div>
+      <div class="card-title">Reduction Potential by Green Software Strategy</div>
       <div class="chart-container tall">
         <canvas id="strategyChart"></canvas>
       </div>
@@ -774,25 +775,25 @@
 
   <!-- ── DESIGN PATTERNS ── -->
   <section id="design-patterns">
-    <div class="section-title">Análise de Design Patterns Green Software</div>
-    <p class="section-desc">Avaliação do impacto potencial da implementação de 4 padrões específicos de design para eficiência energética.</p>
+    <div class="section-title">Green Software Design Patterns Analysis</div>
+    <p class="section-desc">Assessment of the potential impact of implementing 4 specific design patterns for energy efficiency.</p>
 
     <div class="grid-2">
       <!-- Green by Default -->
       <div class="card">
         <div class="card-title">1. Green by Default</div>
         <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
-          Configurações padrão otimizadas para o menor consumo de recursos possível.
+          Default configurations optimized for the lowest possible resource consumption.
         </p>
         <div class="insight-box blue" style="margin-bottom:1rem;">
-          <p><strong>Status Atual:</strong> 15.498 queries usam <code>limit=-1</code> e 68.713 não definem paginação explícita.</p>
+          <p><strong>Current Status:</strong> 15,498 queries use <code>limit=-1</code> and 68,713 do not define explicit pagination.</p>
         </div>
         <div class="progress-row">
-          <div class="progress-label"><strong>Potencial de Redução de Payload</strong><span>45%</span></div>
+          <div class="progress-label"><strong>Payload Reduction Potential</strong><span>45%</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width:45%;background:#27ae60"></div></div>
         </div>
         <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
-          Ao forçar <code>limit=50</code> como padrão e remover <code>limit=-1</code>, eliminamos o desperdício de processar dados que o cliente muitas vezes não exibe.
+          By enforcing <code>limit=50</code> as default and removing <code>limit=-1</code>, we eliminate the waste of processing data that the client often does not display.
         </p>
       </div>
 
@@ -800,17 +801,17 @@
       <div class="card">
         <div class="card-title">2. Just Latest Updates (Delta)</div>
         <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
-          Entrega apenas a diferença (delta) entre a última requisição e a atual.
+          Delivers only the difference (delta) between the last request and the current one.
         </p>
         <div class="insight-box orange" style="margin-bottom:1rem;">
-          <p><strong>Candidatos:</strong> 71,6% das requests (149.135) são repetições de recursos em menos de 5 min.</p>
+          <p><strong>Candidates:</strong> 71.6% of requests (149,135) are resource repetitions within less than 5 min.</p>
         </div>
         <div class="progress-row">
-          <div class="progress-label"><strong>Economia de Banda Estimada</strong><span>70%</span></div>
+          <div class="progress-label"><strong>Estimated Bandwidth Savings</strong><span>70%</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width:70%;background:#3498db"></div></div>
         </div>
         <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
-          Com intervalo médio de 22s entre polls, o uso de deltas evitaria o reenvio constante de dados estáticos (ex: nomes de hotéis, coordenadas).
+          With an average interval of 22s between polls, using deltas would avoid the constant resending of static data (e.g., hotel names, coordinates).
         </p>
       </div>
 
@@ -818,17 +819,17 @@
       <div class="card">
         <div class="card-title">3. Wish List (Sparse Fieldsets)</div>
         <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
-          Permite ao cliente selecionar exatamente quais campos deseja receber.
+          Allows the client to select exactly which fields they want to receive.
         </p>
         <div class="insight-box green" style="margin-bottom:1rem;">
-          <p><strong>Uso Atual:</strong> 50,7% já usam <code>fields=</code>. 102.663 ainda recebem o objeto completo.</p>
+          <p><strong>Current Usage:</strong> 50.7% already use <code>fields=</code>. 102,663 still receive the full object.</p>
         </div>
         <div class="progress-row">
-          <div class="progress-label"><strong>Redução de Payload por Request</strong><span>60%</span></div>
+          <div class="progress-label"><strong>Payload Reduction per Request</strong><span>60%</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width:60%;background:#1abc9c"></div></div>
         </div>
         <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
-          Campos como <code>Id</code> e <code>Title</code> são os mais pedidos. Tornar a seleção obrigatória reduz o custo de serialização JSON.
+          Fields like <code>Id</code> and <code>Title</code> are the most requested. Making selection mandatory reduces the JSON serialization cost.
         </p>
       </div>
 
@@ -836,40 +837,66 @@
       <div class="card">
         <div class="card-title">4. Wish Template</div>
         <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
-          Templates pré-definidos para casos de uso comuns (ex: 'summary', 'map').
+          Pre-defined templates for common use cases (e.g., 'summary', 'map').
         </p>
         <div class="insight-box blue" style="margin-bottom:1rem;">
-          <p><strong>Beneficiários:</strong> 20 endpoints principais concentram 90% da carga de serialização.</p>
+          <p><strong>Beneficiaries:</strong> Top 20 endpoints account for 90% of the serialization load.</p>
         </div>
         <div class="progress-row">
-          <div class="progress-label"><strong>Redução de CPU no Servidor</strong><span>25%</span></div>
+          <div class="progress-label"><strong>Server CPU Reduction</strong><span>25%</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width:25%;background:#9b59b6"></div></div>
         </div>
         <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
-          Templates evitam o parsing repetitivo de strings de campos e permitem otimizações de cache no nível da projeção do banco de dados.
+          Templates avoid repetitive parsing of field strings and enable cache optimizations at the database projection level.
         </p>
       </div>
     </div>
 
-    <!-- Métricas reais do simulador -->
+    <!-- Real simulator metrics -->
     <div class="card" style="margin-top:0;">
-      <div class="card-title">Métricas Reais — Traffic Simulator</div>
+      <div class="card-title">Real Metrics — Traffic Simulator</div>
       <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1.2rem;">
-        Dados coletados via simulação HTTP real (<span id="sim-total">—</span> URIs únicas simuladas):
-        tamanho médio de payload e latência por design pattern e por host.
+        Data collected via real HTTP simulation (<span id="sim-total">—</span> simulated unique URIs):
+        average payload size and latency by design pattern and by host.
       </p>
+      <div class="kpi-grid" style="margin-bottom:1.1rem;">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">📤</div>
+          <div class="kpi-value" id="sim-traffic-request-gb">—</div>
+          <div class="kpi-label">Estimated Request Traffic</div>
+          <div class="kpi-sub" id="sim-traffic-request-bytes">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📥</div>
+          <div class="kpi-value" id="sim-traffic-response-gb">—</div>
+          <div class="kpi-label">Estimated Response Traffic</div>
+          <div class="kpi-sub" id="sim-traffic-response-bytes">—</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">🔁</div>
+          <div class="kpi-value" id="sim-traffic-total-gb">—</div>
+          <div class="kpi-label">Estimated Total Traffic</div>
+          <div class="kpi-sub" id="sim-traffic-total-bytes">—</div>
+        </div>
+        <div class="kpi-card warn">
+          <div class="kpi-icon">🧷</div>
+          <div class="kpi-value" id="sim-traffic-coverage-pct">—</div>
+          <div class="kpi-label">Coverage of Original Log</div>
+          <div class="kpi-sub" id="sim-traffic-unlinked">—</div>
+        </div>
+      </div>
       <div class="grid-2">
         <div>
-          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Distribuição por Pattern</div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Distribution by Pattern</div>
           <table>
             <thead>
-              <tr><th>Pattern</th><th>Requests</th><th>%</th><th>Avg KB</th><th>Avg Latência</th></tr>
+              <tr><th>Pattern</th><th>Requests</th><th>%</th><th>Avg KB</th><th>Avg Latency</th><th>Est. Saved KB</th></tr>
             </thead>
             <tbody id="simPatternTable"></tbody>
           </table>
         </div>
         <div>
-          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Tamanho Médio de Resposta por Host (KB)</div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Average Response Size by Host (KB)</div>
           <div class="chart-container medium">
             <canvas id="simHostSizeChart"></canvas>
           </div>
@@ -882,7 +909,7 @@
       <div class="card-title">SCI — Software Carbon Intensity (Green Software Foundation)</div>
 
       <div class="insight-box blue" style="margin-bottom:1.2rem;">
-        <h4>📐 Fórmula SCI (GSF Specification v1)</h4>
+        <h4>📐 SCI Formula (GSF Specification v1)</h4>
         <p style="font-family:monospace;font-size:0.95rem;margin:0.4rem 0;">
           <strong id="sci-formula">SCI = ((E_net + E_compute) &times; I + M) / R</strong>
         </p>
@@ -890,20 +917,20 @@
           <strong>E_net</strong> = bytes transferidos &times; 0,001 kWh/GB &nbsp;·&nbsp;
           <strong>E_compute</strong> = 100 W &times; latência &nbsp;·&nbsp;
           <strong>I</strong> = <span id="sci-intensity">233</span> gCO₂eq/kWh (Itália 2023, Ember Climate) &nbsp;·&nbsp;
-          <strong>M</strong> = 0,000013 gCO₂eq/req (hardware amortizado) &nbsp;·&nbsp;
-          <strong>R</strong> = 1 request (unidade funcional)
+          <strong>M</strong> = 0.000013 gCO₂eq/req (amortized hardware) &nbsp;·&nbsp;
+          <strong>R</strong> = 1 request (functional unit)
         </p>
       </div>
 
       <div class="grid-2" style="margin-bottom:1.5rem;">
         <div>
-          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">SCI Atual vs. Após Aplicar Pattern</div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Current SCI vs. After Applying Pattern</div>
           <div class="chart-container tall">
             <canvas id="sciCompareChart"></canvas>
           </div>
         </div>
         <div>
-          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Detalhamento por Pattern</div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Details by Pattern</div>
           <div class="table-wrap">
             <table>
               <thead>
@@ -911,179 +938,378 @@
                   <th>Pattern</th>
                   <th>Avg KB</th>
                   <th>Lat.</th>
-                  <th>Rede/CPU</th>
-                  <th>SCI atual<br><small>(mgCO₂/req)</small></th>
-                  <th>SCI otim.<br><small>(mgCO₂/req)</small></th>
-                  <th>Redução</th>
-                  <th>CO₂ salvo<br><small>(gCO₂eq)</small></th>
+                  <th>Network/CPU</th>
+                  <th>Current SCI<br><small>(mgCO₂/req)</small></th>
+                  <th>Optimized SCI<br><small>(mgCO₂/req)</small></th>
+                  <th>Reduction</th>
+                  <th>CO₂ saved<br><small>(gCO₂eq)</small></th>
                 </tr>
               </thead>
               <tbody id="sciPatternTable"></tbody>
             </table>
           </div>
           <p style="font-size:0.78rem;color:var(--text-light);margin-top:0.8rem;">
-            CO₂ salvo = economia por request &times; nº de requests simuladas.
-            Intensidade carbono: Itália 2023 (Ember Climate).
+            CO₂ saved = savings per request &times; number of simulated requests.
+            Carbon intensity: Italy 2023 (Ember Climate).
           </p>
         </div>
       </div>
 
       <!-- Wish Template detail -->
       <div class="card-title" style="font-size:0.95rem;margin-bottom:0.5rem;">
-        Wish Template — Campos por Chamada e SCI por Template
+        Wish Template — Fields per Call and SCI per Template
       </div>
       <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
-        Os templates abaixo foram identificados automaticamente a partir dos padrões de uso do parâmetro
-        <code>fields=</code>. Cada template define um conjunto mínimo de campos para um caso de uso
-        específico, eliminando serialização desnecessária no servidor.
+        The templates below were automatically identified from the usage patterns of the
+        <code>fields=</code> parameter. Each template defines a minimal set of fields for a specific
+        use case, eliminating unnecessary serialization on the server.
       </p>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Template</th>
-              <th>Campos incluídos</th>
-              <th>Tam. estimado</th>
+              <th>Included fields</th>
+              <th>Est. size</th>
               <th>SCI (mgCO₂/req)</th>
-              <th>Requests/período</th>
-              <th>Caso de uso</th>
+              <th>Requests/period</th>
+              <th>Use case</th>
             </tr>
           </thead>
           <tbody id="wishTemplateTable"></tbody>
         </table>
       </div>
       <div class="insight-box green" style="margin-top:1rem;">
-        <h4>✅ Conclusão Wish Template</h4>
+        <h4>✅ Wish Template Conclusion</h4>
         <p id="sci-wt-conclusion">
-          Substituir respostas completas por templates pré-definidos reduz o SCI em aproximadamente
+          Replacing full responses with pre-defined templates reduces the SCI by approximately
           <strong id="sci-wt-reduction">50%</strong> — de
-          <strong id="sci-wt-baseline">1,53</strong> para
-          <strong id="sci-wt-optimized">0,77</strong> mgCO₂eq por request.
-          O ganho vem principalmente da redução de tempo de processamento no servidor
-          (projeção e serialização), não apenas do tamanho do payload.
+          <strong id="sci-wt-baseline">1.53</strong> to
+          <strong id="sci-wt-optimized">0.77</strong> mgCO₂eq per request.
+          The gain comes mainly from reducing processing time on the server
+          (projection and serialization), not just from payload size.
         </p>
       </div>
     </div>
 
     <div class="card" style="background: var(--green-dark); color: white; border: none;">
-      <div class="card-title" style="color: white; border-bottom-color: rgba(255,255,255,0.2);">Impacto Combinado dos Patterns</div>
+      <div class="card-title" style="color: white; border-bottom-color: rgba(255,255,255,0.2);">Combined Patterns Impact</div>
       <div class="grid-3" style="text-align: center;">
         <div>
           <div style="font-size: 2.5rem; font-weight: 800;">55%</div>
-          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Redução de Energia</div>
+          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Energy Reduction</div>
         </div>
         <div>
           <div style="font-size: 2.5rem; font-weight: 800;">52%</div>
-          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Pegada de Carbono</div>
+          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Carbon Footprint</div>
         </div>
         <div>
           <div style="font-size: 2.5rem; font-weight: 800;">~1.2M</div>
-          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Requests/Semana Evitadas</div>
+          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Requests/Week Avoided</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PARAMETERS ── -->
+  <section id="parametros">
+    <div class="section-title">Request Parameter Analysis</div>
+    <p class="section-desc">Analysis of query parameters extracted from the original log requests, identifying which parameters appear most often, where they concentrate, and which usage patterns deserve optimization.</p>
+
+    <div class="kpi-grid">
+      <div class="kpi-card blue">
+        <div class="kpi-icon">🔎</div>
+        <div class="kpi-value" id="param-kpi-request-pct">—</div>
+        <div class="kpi-label">Parameterized Requests</div>
+        <div class="kpi-sub" id="param-kpi-request-count">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🧩</div>
+        <div class="kpi-value" id="param-kpi-total-rows">—</div>
+        <div class="kpi-label">Parameter Rows Captured</div>
+        <div class="kpi-sub" id="param-kpi-unique-names">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📏</div>
+        <div class="kpi-value" id="param-kpi-avg-per-request">—</div>
+        <div class="kpi-label">Avg Params per Request</div>
+        <div class="kpi-sub" id="param-kpi-max-per-request">—</div>
+      </div>
+      <div class="kpi-card warn">
+        <div class="kpi-icon">🗃</div>
+        <div class="kpi-value" id="param-kpi-fields-pct">—</div>
+        <div class="kpi-label">Requests Using fields=</div>
+        <div class="kpi-sub warn" id="param-kpi-fields-count">—</div>
+      </div>
+      <div class="kpi-card green" id="param-savings-kpi-card">
+        <div class="kpi-icon">💾</div>
+        <div class="kpi-value" id="param-kpi-savings-mb">—</div>
+        <div class="kpi-label">Estimated Savings (MB, weighted)</div>
+        <div class="kpi-sub" id="param-kpi-savings-bytes">—</div>
+      </div>
+      <div class="kpi-card blue" id="param-savings-reduction-kpi-card">
+        <div class="kpi-icon">📉</div>
+        <div class="kpi-value" id="param-kpi-savings-pct">—</div>
+        <div class="kpi-label">Estimated Reduction</div>
+        <div class="kpi-sub" id="param-kpi-savings-rows">—</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Top Query Parameters by Request Coverage</div>
+        <div class="chart-container tall">
+          <canvas id="parameterUsageChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Parameterized Requests by Host</div>
+        <div class="chart-container tall">
+          <canvas id="parameterHostChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Most Frequent Parameters</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Requests</th>
+                <th>Coverage</th>
+                <th>Rows</th>
+                <th>Hosts</th>
+              </tr>
+            </thead>
+            <tbody id="parameterTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Most Frequent Parameter Values</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Occurrences</th>
+              </tr>
+            </thead>
+            <tbody id="parameterValuesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" id="pagesizeFocusGrid">
+      <div class="card">
+        <div class="card-title">Pagesize Distribution (Original Log)</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>pagesize</th>
+                <th>Occurrences</th>
+                <th>% of Original Log</th>
+              </tr>
+            </thead>
+            <tbody id="pagesizeDistributionTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">pagesize=20000 vs pagesize=10000</div>
+        <p style="font-size:0.9rem;color:var(--text-light);margin-bottom:0.75rem;">
+          Comparison between original log volume and successfully simulated requests.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Scope</th>
+                <th>pagesize=20000</th>
+                <th>pagesize=10000</th>
+              </tr>
+            </thead>
+            <tbody id="pagesizeFocusTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" id="parameterSavingsCharts">
+      <div class="card">
+        <div class="card-title">Estimated Savings by Pattern (MB, weighted)</div>
+        <div class="chart-container tall">
+          <canvas id="parameterSavingsPatternChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top Parameters by Estimated Savings (MB, weighted)</div>
+        <div class="chart-container tall">
+          <canvas id="parameterSavingsParameterChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="parameterSavingsTableCard">
+      <div class="card-title">Top Endpoint + Parameter + Pattern by Estimated Savings</div>
+      
+      <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="pattern-filter-btn active" data-pattern="all" style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 4px; background: #007bff; color: white; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+          All Patterns
+        </button>
+        <button class="pattern-filter-btn" data-pattern="Green by Default" style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 4px; background: white; color: #333; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+          Green by Default
+        </button>
+        <button class="pattern-filter-btn" data-pattern="Just Latest Updates" style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 4px; background: white; color: #333; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+          Just Latest Updates
+        </button>
+        <button class="pattern-filter-btn" data-pattern="Wish List" style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 4px; background: white; color: #333; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+          Wish List
+        </button>
+        <button class="pattern-filter-btn" data-pattern="Wish Template" style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 4px; background: white; color: #333; cursor: pointer; font-weight: 500; transition: all 0.2s;">
+          Wish Template
+        </button>
+      </div>
+      
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Host</th>
+              <th>Endpoint</th>
+              <th>Parameter</th>
+              <th>Pattern</th>
+              <th>Req</th>
+              <th>Saved (MB)</th>
+            </tr>
+          </thead>
+          <tbody id="parameterSavingsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-box blue">
+        <h4>🧭 Field Selection</h4>
+        <p><strong id="param-fields-summary">—</strong> of simulated requests explicitly use <code>fields=</code>. This is the clearest signal of sparse fieldset adoption and should drive template and projection decisions.</p>
+      </div>
+      <div class="insight-box orange">
+        <h4>📄 Pagination Controls</h4>
+        <p><strong id="param-pagination-summary">—</strong> of simulated requests carry <code>limit</code>, <code>pagesize</code> or <code>pagenumber</code>. Low pagination coverage indicates endpoints still returning oversized payloads by default.</p>
+      </div>
+      <div class="insight-box green">
+        <h4>🧩 Client Fingerprinting</h4>
+        <p><strong id="param-origin-summary">—</strong> of simulated requests include <code>origin=</code>, which helps identify consumers and supports targeted cache, throttling and migration actions.</p>
       </div>
     </div>
   </section>
 
   <!-- ── RECOMENDAÇÕES ── -->
   <section id="recomendacoes">
-    <div class="section-title">Recomendações Green Software</div>
-    <p class="section-desc">Estratégias priorizadas para reduzir o impacto ambiental da plataforma, baseadas nos padrões identificados nos logs.</p>
+    <div class="section-title">Green Software Recommendations</div>
+    <p class="section-desc">Prioritized strategies to reduce the environmental impact of the platform, based on patterns identified in the logs.</p>
 
     <div class="rec-grid">
       <div class="rec-card">
         <div class="rec-number">1</div>
-        <h4>Implementar Cache HTTP com TTL Adequado</h4>
-        <p>Adicionar headers <code>Cache-Control: max-age=60</code> e suporte a <code>ETag</code> / <code>Last-Modified</code> nos endpoints de alta repetição. Endpoints como <strong>/v1/STA/Accommodation</strong> (ratio 1664x) e <strong>/v1/STA/ODHActivityPoi</strong> (ratio 1365x) devem ser priorizados.</p>
+        <h4>Implement HTTP Cache with Adequate TTL</h4>
+        <p>Add <code>Cache-Control: max-age=60</code> headers and support for <code>ETag</code> / <code>Last-Modified</code> on high-repetition endpoints. Endpoints like <strong>/v1/STA/Accommodation</strong> (ratio 1664x) and <strong>/v1/STA/ODHActivityPoi</strong> (ratio 1365x) should be prioritized.</p>
         <div class="rec-impact">
-          <span class="impact-high">Redução: até 61,3%</span>
-          <span class="impact-high">Impacto: Crítico</span>
-          <span class="impact-med">Esforço: Médio</span>
+          <span class="impact-high">Reduction: up to 61.3%</span>
+          <span class="impact-high">Impact: Critical</span>
+          <span class="impact-med">Effort: Medium</span>
         </div>
       </div>
       <div class="rec-card">
         <div class="rec-number">2</div>
-        <h4>Eliminar ou Controlar Queries com limit=-1</h4>
-        <p>As <strong>15.498 queries com limit=-1</strong> (7,4% do total) retornam todos os registros sem paginação, concentradas nos hosts de mobilidade. Implementar paginação obrigatória ou limites máximos (ex: limit=1000) reduz drasticamente o payload de resposta.</p>
+        <h4>Eliminate or Control Queries with limit=-1</h4>
+        <p>The <strong>15,498 queries with limit=-1</strong> (7.4% of total) return all records without pagination, concentrated on mobility hosts. Implementing mandatory pagination or maximum limits (e.g., limit=1000) drastically reduces the response payload.</p>
         <div class="rec-impact">
-          <span class="impact-high">Redução de banda: ~40%</span>
-          <span class="impact-high">Impacto: Alto</span>
-          <span class="impact-low">Esforço: Baixo</span>
+          <span class="impact-high">Bandwidth reduction: ~40%</span>
+          <span class="impact-high">Impact: High</span>
+          <span class="impact-low">Effort: Low</span>
         </div>
       </div>
       <div class="rec-card">
         <div class="rec-number">3</div>
-        <h4>Implementar Debounce e Rate Limiting nos Clientes</h4>
-        <p>29,6% das requests são duplicatas no mesmo segundo. Implementar debounce de 1-5 segundos nos web components e rate limiting por IP/origem eliminaria o polling agressivo sem impactar a experiência do usuário.</p>
+        <h4>Implement Debounce and Rate Limiting on Clients</h4>
+        <p>29.6% of requests are duplicates within the same second. Implementing 1-5 second debounce in web components and rate limiting per IP/origin would eliminate aggressive polling without impacting user experience.</p>
         <div class="rec-impact">
-          <span class="impact-high">Redução: 29-43%</span>
+          <span class="impact-high">Reduction: 29-43%</span>
           <span class="impact-high">Impacto: Alto</span>
           <span class="impact-med">Esforço: Médio</span>
         </div>
       </div>
       <div class="rec-card">
         <div class="rec-number">4</div>
-        <h4>Consolidar Hosts Legados</h4>
-        <p>Existem 4 hosts legados (<code>*.bz.it</code> e <code>tourism.opendatahub.com</code>) que somam 34% do tráfego. Migrar para os hosts atuais (<code>*.api.opendatahub.com</code>) e desativar os legados reduz overhead de DNS, certificados TLS e manutenção de infraestrutura.</p>
+        <h4>Consolidate Legacy Hosts</h4>
+        <p>There are 4 legacy hosts (<code>*.bz.it</code> and <code>tourism.opendatahub.com</code>) that account for 34% of traffic. Migrating to current hosts (<code>*.api.opendatahub.com</code>) and decommissioning legacy ones reduces DNS overhead, TLS certificates, and infrastructure maintenance.</p>
         <div class="rec-impact">
-          <span class="impact-med">Redução infra: ~34%</span>
-          <span class="impact-med">Impacto: Médio</span>
+          <span class="impact-med">Infra reduction: ~34%</span>
+          <span class="impact-med">Impact: Medium</span>
           <span class="impact-med">Esforço: Médio</span>
         </div>
       </div>
       <div class="rec-card">
         <div class="rec-number">5</div>
-        <h4>Implementar Seleção de Campos (Sparse Fieldsets)</h4>
-        <p>Muitas requests usam o parâmetro <code>fields=</code> para selecionar apenas alguns campos, mas a maioria não o usa. Incentivar o uso de <code>fields=</code> e implementar projeção no servidor reduz o tamanho das respostas e o processamento de serialização.</p>
+        <h4>Implement Field Selection (Sparse Fieldsets)</h4>
+        <p>Many requests use the <code>fields=</code> parameter to select only a few fields, but most do not. Encouraging the use of <code>fields=</code> and implementing server-side projection reduces response size and serialization processing.</p>
         <div class="rec-impact">
-          <span class="impact-med">Redução payload: 30-70%</span>
+          <span class="impact-med">Payload reduction: 30-70%</span>
           <span class="impact-med">Impacto: Médio</span>
           <span class="impact-low">Esforço: Baixo</span>
         </div>
       </div>
       <div class="rec-card">
         <div class="rec-number">6</div>
-        <h4>Cache por Idioma com Vary Header</h4>
-        <p>60,2% das requests especificam idioma (DE, IT, EN). Implementar cache com <code>Vary: Accept-Language</code> ou incluir idioma na chave de cache permite reutilizar respostas por idioma, reduzindo processamento de tradução/filtragem no servidor.</p>
+        <h4>Language Cache with Vary Header</h4>
+        <p>60.2% of requests specify a language (DE, IT, EN). Implementing cache with <code>Vary: Accept-Language</code> or including language in the cache key allows reusing responses per language, reducing translation/filtering processing on the server.</p>
         <div class="rec-impact">
-          <span class="impact-med">Redução CPU: ~25%</span>
-          <span class="impact-low">Impacto: Moderado</span>
+          <span class="impact-med">CPU reduction: ~25%</span>
+          <span class="impact-low">Impact: Moderate</span>
           <span class="impact-low">Esforço: Baixo</span>
         </div>
       </div>
     </div>
 
-    <!-- Resumo de impacto estimado -->
+    <!-- Estimated impact summary -->
     <div class="card" style="margin-top:2rem;">
-      <div class="card-title">Estimativa de Impacto Combinado das Recomendações</div>
+      <div class="card-title">Estimated Combined Impact of Recommendations</div>
       <div class="grid-2">
         <div>
           <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:1.2rem;">
-            Aplicando as recomendações em conjunto (com sobreposições consideradas), estima-se a seguinte redução no volume de requests e consumo de recursos:
+            Applying the recommendations together (with overlaps considered), the following reduction in request volume and resource consumption is estimated:
           </p>
           <div class="progress-row">
-            <div class="progress-label"><strong>Redução de Requests (cache 60s)</strong><span>61,3%</span></div>
+            <div class="progress-label"><strong>Request Reduction (cache 60s)</strong><span>61.3%</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:61.3%;background:#e74c3c"></div></div>
           </div>
           <div class="progress-row">
-            <div class="progress-label"><strong>Redução de Banda (sem limit=-1)</strong><span>~40%</span></div>
+            <div class="progress-label"><strong>Bandwidth Reduction (without limit=-1)</strong><span>~40%</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:40%;background:#e67e22"></div></div>
           </div>
           <div class="progress-row">
-            <div class="progress-label"><strong>Redução de CPU (cache + fields)</strong><span>~55%</span></div>
+            <div class="progress-label"><strong>CPU Reduction (cache + fields)</strong><span>~55%</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:55%;background:#27ae60"></div></div>
           </div>
           <div class="progress-row">
-            <div class="progress-label"><strong>Redução de Infra (consolidação hosts)</strong><span>~34%</span></div>
+            <div class="progress-label"><strong>Infra Reduction (host consolidation)</strong><span>~34%</span></div>
             <div class="progress-bar"><div class="progress-fill" style="width:34%;background:#3498db"></div></div>
           </div>
         </div>
         <div class="insight-box green" style="align-self:start;">
-          <h4>🌿 Impacto Green Software</h4>
+          <h4>🌿 Green Software Impact</h4>
           <p>
-            Em 8 horas, <strong>127.677 requests poderiam ser eliminadas</strong> apenas com cache de 60s. 
-            Extrapolando para 24h, isso representa aproximadamente <strong>383.000 requests/dia evitáveis</strong> — 
-            reduzindo proporcionalmente o consumo de energia dos servidores, refrigeração e infraestrutura de rede, 
-            alinhando a plataforma com os princípios de <strong>Green Software Foundation</strong>.
+            In 8 hours, <strong>127,677 requests could be eliminated</strong> with just a 60s cache. 
+            Extrapolating to 24h, this represents approximately <strong>383,000 avoidable requests/day</strong> — 
+            proportionally reducing server energy consumption, cooling, and network infrastructure,
+            aligning the platform with the principles of <strong>Green Software Foundation</strong>.
           </p>
         </div>
       </div>
@@ -1095,14 +1321,14 @@
 <!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
 <footer>
   <p><strong>Green Software Analysis — OpenDataHub</strong></p>
-  <p style="margin-top:0.5rem;">Análise baseada em 208.171 registros de log do período 16h00–23h59 de 24/03/2025 · Gerado automaticamente</p>
+  <p style="margin-top:0.5rem;">Analysis based on 208,171 log records from the period 4:00 PM–11:59 PM on 03/24/2025 · Auto-generated</p>
 </footer>
 
 <!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
 <script>
-// ── Dados carregados dinamicamente de dashboard_data.json ─────────────────────
+// ── Data dynamically loaded from dashboard_data.json ────────────────────────
 
-// ── Paleta de cores ───────────────────────────────────────────────────────────
+// ── Color palette ────────────────────────────────────────────────────────────
 const GREENS = ['#1a5c33','#27ae60','#2ecc71','#1abc9c','#16a085','#0e6655','#3d9970','#52be80','#82e0aa','#a9dfbf'];
 const BLUES  = ['#1a5276','#2980b9','#3498db','#5dade2','#85c1e9'];
 const MIXED  = ['#27ae60','#3498db','#e67e22','#9b59b6','#e74c3c','#1abc9c','#f39c12','#2ecc71','#2980b9','#8e44ad'];
@@ -1113,16 +1339,43 @@ function shortEndpoint(ep) {
   return parts.slice(-2).join('/').substring(0, 35);
 }
 
-// ── Carrega todos os dados e inicializa o dashboard ───────────────────────────
+const topEndpointsValueLabelPlugin = {
+  id: 'topEndpointsValueLabel',
+  afterDatasetsDraw(chart) {
+    if (chart.canvas.id !== 'topEndpointsChart') return;
+
+    const dataset = chart.data.datasets[0];
+    const meta = chart.getDatasetMeta(0);
+    const { ctx, chartArea } = chart;
+
+    ctx.save();
+    ctx.font = '600 10px "Segoe UI", sans-serif';
+    ctx.fillStyle = '#1f2937';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+
+    meta.data.forEach((bar, idx) => {
+      const value = Number(dataset.data[idx] || 0);
+      const label = value.toLocaleString('en-US');
+      const maxX = chartArea.right - ctx.measureText(label).width - 4;
+      const x = Math.min(bar.x + 6, maxX);
+      ctx.fillText(label, x, bar.y);
+    });
+
+    ctx.restore();
+  }
+};
+
+// ── Load all data and initialize the dashboard ──────────────────────────────
 fetch('dashboard_data.json')
   .then(r => r.json())
   .then(data => {
 
-// ── Atualiza DOM: header, KPIs e tabela de hosts ──────────────────────────────
+// ── Update DOM: header, KPIs and hosts table ────────────────────────────────
 (function updateDOM() {
   const m   = data.meta;
-  const fmt = n => Number(n).toLocaleString('pt-BR');
-  const pct = (n, d=1) => n.toFixed(d).replace('.', ',') + '%';
+  const fmt = n => Number(n).toLocaleString('en-US');
+  const pct = (n, d=1) => n.toFixed(d) + '%';
 
   document.getElementById('meta-period').textContent   = m.period_label;
   document.getElementById('meta-duration').textContent  = fmt(m.duration_minutes);
@@ -1130,27 +1383,27 @@ fetch('dashboard_data.json')
   document.getElementById('meta-hosts').textContent     = m.unique_hosts;
 
   document.getElementById('kpi-total').textContent      = fmt(m.total_requests);
-  document.getElementById('kpi-total-sub').textContent  = `~${fmt(m.avg_rpm)} req/min em média`;
+  document.getElementById('kpi-total-sub').textContent  = `~${fmt(m.avg_rpm)} req/min average`;
   document.getElementById('kpi-dup-pct').textContent    = pct(m.duplicate_60s_pct);
-  document.getElementById('kpi-dup-count').textContent  = `${fmt(m.duplicate_60s_count)} requests evitáveis`;
+  document.getElementById('kpi-dup-count').textContent  = `${fmt(m.duplicate_60s_count)} avoidable requests`;
   document.getElementById('kpi-heavy-pct').textContent  = pct(m.heavy_queries_pct);
-  document.getElementById('kpi-heavy-count').textContent= `${fmt(m.heavy_queries_count)} queries sem paginação`;
+  document.getElementById('kpi-heavy-count').textContent= `${fmt(m.heavy_queries_count)} queries without pagination`;
   document.getElementById('kpi-endpoints').textContent  = fmt(m.unique_endpoints);
-  document.getElementById('kpi-uris').textContent       = `${fmt(m.unique_uris)} URIs distintas`;
+  document.getElementById('kpi-uris').textContent       = `${fmt(m.unique_uris)} distinct URIs`;
   document.getElementById('kpi-hosts').textContent      = m.unique_hosts;
-  document.getElementById('kpi-rps').textContent        = String(m.avg_rps).replace('.', ',');
-  document.getElementById('kpi-rps-peak').textContent   = `Pico: ${fmt(m.peak_rps)} req/s`;
+  document.getElementById('kpi-rps').textContent        = String(m.avg_rps);
+  document.getElementById('kpi-rps-peak').textContent   = `Peak: ${fmt(m.peak_rps)} req/s`;
   document.getElementById('kpi-pag-pct').textContent    = pct(m.pagination_pct);
-  document.getElementById('kpi-pag-count').textContent  = `${fmt(m.pagination_count)} com pagesize/pagenumber`;
+  document.getElementById('kpi-pag-count').textContent  = `${fmt(m.pagination_count)} with pagesize/pagenumber`;
   document.getElementById('kpi-langs').textContent      = m.unique_languages;
-  const topLangs = data.languages.filter(l => !l.language.includes('especificado')).slice(0, 3);
+  const topLangs = data.languages.filter(l => !l.language.includes('not specified')).slice(0, 3);
   if (topLangs.length >= 3) {
     document.getElementById('kpi-langs-sub').textContent =
       topLangs.map(l => `${l.language.split(' ')[0]} (${l.pct}%)`).join(' · ');
   }
 })();
 
-// ── Tabela de hosts ───────────────────────────────────────────────────────────
+// ── Hosts table ──────────────────────────────────────────────────────────────
 (function buildHostTable() {
   const colors = ['#27ae60','#1abc9c','#3498db','#16a085','#2980b9','#82e0aa'];
   const tbody = document.getElementById('hostsTableBody');
@@ -1163,14 +1416,14 @@ fetch('dashboard_data.json')
         <td>${i + 1}</td>
         <td><strong>${h.host}</strong></td>
         <td><span class="badge ${typeClass}">${h.type}</span></td>
-        <td>${Number(h.requests).toLocaleString('pt-BR')}</td>
+        <td>${Number(h.requests).toLocaleString('en-US')}</td>
         <td>
           <div class="progress-bar">
             <div class="progress-fill" style="width:${h.pct}%;background:${color}"></div>
           </div>
-          ${h.pct.toFixed(2).replace('.', ',')}%
+          ${h.pct.toFixed(2)}%
         </td>
-        <td>${h.rpm.toLocaleString('pt-BR')}</td>
+        <td>${h.rpm.toLocaleString('en-US')}</td>
         <td><span class="badge ${statusClass}">${h.status}</span></td>
       </tr>`;
   });
@@ -1197,12 +1450,12 @@ new Chart(document.getElementById('hostChart'), {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} requests (${data.hosts[ctx.dataIndex].pct}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('en-US')} requests (${data.hosts[ctx.dataIndex].pct}%)`
         }
       }
     },
     scales: {
-      x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR') } },
+      x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('en-US') } },
       y: { grid: { display: false } }
     }
   }
@@ -1227,7 +1480,7 @@ new Chart(document.getElementById('hostPieChart'), {
       legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${data.hosts[ctx.dataIndex].pct}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('en-US')} (${data.hosts[ctx.dataIndex].pct}%)`
         }
       }
     },
@@ -1241,7 +1494,7 @@ new Chart(document.getElementById('originsChart'), {
   data: {
     labels: data.origins.map(o => o.origin.replace('webcomp-','')),
     datasets: [{
-      label: 'Requests com origin=',
+      label: 'Requests with origin=',
       data: data.origins.map(o => o.count),
       backgroundColor: BLUES,
       borderRadius: 4
@@ -1340,7 +1593,7 @@ new Chart(document.getElementById('categoryChart'), {
       legend: { position: 'right', labels: { font: { size: 11 }, padding: 10 } },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${data.categories[ctx.dataIndex].pct}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('en-US')} (${data.categories[ctx.dataIndex].pct}%)`
         }
       }
     },
@@ -1351,6 +1604,7 @@ new Chart(document.getElementById('categoryChart'), {
 // ── Chart 7: Top Endpoints ────────────────────────────────────────────────────
 new Chart(document.getElementById('topEndpointsChart'), {
   type: 'bar',
+  plugins: [topEndpointsValueLabelPlugin],
   data: {
     labels: data.topEndpoints.map(e => shortEndpoint(e.endpoint)),
     datasets: [{
@@ -1366,10 +1620,11 @@ new Chart(document.getElementById('topEndpointsChart'), {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
+      topEndpointsValueLabel: {},
       tooltip: {
         callbacks: {
           title: ctx => data.topEndpoints[ctx[0].dataIndex].endpoint,
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} req (${data.topEndpoints[ctx.dataIndex].pct}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('en-US')} req (${data.topEndpoints[ctx.dataIndex].pct}%)`
         }
       }
     },
@@ -1389,7 +1644,7 @@ new Chart(document.getElementById('duplicateChart'), {
   data: {
     labels: dupKeys,
     datasets: [{
-      label: 'Requests Duplicadas',
+      label: 'Duplicate Requests',
       data: dupValues,
       backgroundColor: ['#82e0aa','#52be80','#27ae60','#1e8449','#1a5c33'],
       borderRadius: 6
@@ -1402,7 +1657,7 @@ new Chart(document.getElementById('duplicateChart'), {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} requests (${dupPcts[ctx.dataIndex]}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('en-US')} requests (${dupPcts[ctx.dataIndex]}%)`
         }
       }
     },
@@ -1422,7 +1677,7 @@ const totalReqs   = data.meta.total_requests;
 new Chart(document.getElementById('duplicateImpactChart'), {
   type: 'doughnut',
   data: {
-    labels: ['Requests Únicas (60s)', 'Duplicatas Evitáveis (60s)'],
+    labels: ['Unique Requests (60s)', 'Avoidable Duplicates (60s)'],
     datasets: [{
       data: [totalReqs - dup60count, dup60count],
       backgroundColor: ['#27ae60', '#e74c3c'],
@@ -1437,7 +1692,7 @@ new Chart(document.getElementById('duplicateImpactChart'), {
       legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 15 } },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${(ctx.raw / totalReqs * 100).toFixed(1)}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('en-US')} (${(ctx.raw / totalReqs * 100).toFixed(1)}%)`
         }
       }
     },
@@ -1451,7 +1706,7 @@ new Chart(document.getElementById('cacheChart'), {
   data: {
     labels: data.cacheCandidates.map(c => shortEndpoint(c.endpoint)),
     datasets: [{
-      label: 'Ratio de Cache (req / URI única)',
+      label: 'Cache Ratio (req / unique URI)',
       data: data.cacheCandidates.map(c => c.cache_ratio),
       backgroundColor: GREENS,
       borderRadius: 4
@@ -1467,15 +1722,15 @@ new Chart(document.getElementById('cacheChart'), {
         callbacks: {
           title: ctx => data.cacheCandidates[ctx[0].dataIndex].endpoint,
           label: ctx => [
-            ` Ratio: ${ctx.raw.toLocaleString('pt-BR')}x`,
-            ` Total: ${data.cacheCandidates[ctx.dataIndex].total_requests.toLocaleString('pt-BR')} req`,
-            ` URIs únicas: ${data.cacheCandidates[ctx.dataIndex].unique_uris}`
+            ` Ratio: ${ctx.raw.toLocaleString('en-US')}x`,
+            ` Total: ${data.cacheCandidates[ctx.dataIndex].total_requests.toLocaleString('en-US')} req`,
+            ` Unique URIs: ${data.cacheCandidates[ctx.dataIndex].unique_uris}`
           ]
         }
       }
     },
     scales: {
-      x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR')+'x' } },
+      x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('en-US')+'x' } },
       y: { grid: { display: false }, ticks: { font: { size: 10 } } }
     }
   }
@@ -1486,11 +1741,11 @@ const tbody = document.getElementById('cacheTableBody');
 data.cacheCandidates.forEach((c, i) => {
   const savings = Math.round(c.total_requests * (1 - 1/c.cache_ratio));
   const priority = c.cache_ratio > 1000 ? 'badge-red' : c.cache_ratio > 500 ? 'badge-orange' : 'badge-blue';
-  const priorityLabel = c.cache_ratio > 1000 ? 'Crítica' : c.cache_ratio > 500 ? 'Alta' : 'Média';
+  const priorityLabel = c.cache_ratio > 1000 ? 'Critical' : c.cache_ratio > 500 ? 'High' : 'Medium';
   tbody.innerHTML += `
     <tr>
       <td><code style="font-size:0.82rem;">${c.endpoint}</code></td>
-      <td>${c.total_requests.toLocaleString('pt-BR')}</td>
+      <td>${c.total_requests.toLocaleString('en-US')}</td>
       <td>${c.unique_uris}</td>
       <td><strong>${c.cache_ratio.toLocaleString('pt-BR')}x</strong></td>
       <td>${savings.toLocaleString('pt-BR')} req/8h</td>
@@ -1502,9 +1757,23 @@ data.cacheCandidates.forEach((c, i) => {
 (function buildSimulation() {
   const sim = data.simulation;
   if (!sim) return;
+  const traffic = sim.estimated_traffic_totals || null;
+  const fmtInt = n => Number(n || 0).toLocaleString('en-US');
+  const fmtGb = n => `${Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} GB`;
 
   document.getElementById('sim-total').textContent =
-    sim.total_simulated.toLocaleString('pt-BR');
+    sim.total_simulated.toLocaleString('en-US');
+
+  if (traffic) {
+    document.getElementById('sim-traffic-request-gb').textContent = fmtGb(traffic.request?.gb);
+    document.getElementById('sim-traffic-request-bytes').textContent = `${fmtInt(traffic.request?.bytes)} bytes estimated`;
+    document.getElementById('sim-traffic-response-gb').textContent = fmtGb(traffic.response?.gb);
+    document.getElementById('sim-traffic-response-bytes').textContent = `${fmtInt(traffic.response?.bytes)} bytes estimated`;
+    document.getElementById('sim-traffic-total-gb').textContent = fmtGb(traffic.total?.gb);
+    document.getElementById('sim-traffic-total-bytes').textContent = `${fmtInt(traffic.total?.bytes)} bytes estimated`;
+    document.getElementById('sim-traffic-coverage-pct').textContent = `${Number(traffic.linked_original_requests_pct || 0).toFixed(2)}%`;
+    document.getElementById('sim-traffic-unlinked').textContent = `${fmtInt(traffic.unlinked_original_requests || 0)} original requests without link`;
+  }
 
   // Tabela de patterns
   const ptbody = document.getElementById('simPatternTable');
@@ -1523,6 +1792,7 @@ data.cacheCandidates.forEach((c, i) => {
         <td>${p.pct}%</td>
         <td>${p.avg_size_kb} KB</td>
         <td>${p.avg_latency_s}s</td>
+        <td>${Number(p.estimated_saved_kb_total || 0).toLocaleString('en-US', { maximumFractionDigits: 1 })} KB</td>
       </tr>`;
   });
 
@@ -1532,7 +1802,7 @@ data.cacheCandidates.forEach((c, i) => {
     data: {
       labels: sim.host_metrics.map(h => h.host.replace('tourism.','T.').replace('mobility.','M.').replace('.opendatahub','.ODH')),
       datasets: [{
-        label: 'Tamanho médio (KB)',
+        label: 'Average size (KB)',
         data: sim.host_metrics.map(h => h.avg_size_kb),
         backgroundColor: GREENS,
         borderRadius: 4
@@ -1549,8 +1819,8 @@ data.cacheCandidates.forEach((c, i) => {
             title: ctx => sim.host_metrics[ctx[0].dataIndex].host,
             label: ctx => [
               ` Avg: ${ctx.raw} KB`,
-              ` Latência: ${sim.host_metrics[ctx.dataIndex].avg_latency_s}s`,
-              ` Requests: ${sim.host_metrics[ctx.dataIndex].count.toLocaleString('pt-BR')}`
+              ` Latency: ${sim.host_metrics[ctx.dataIndex].avg_latency_s}s`,
+              ` Requests: ${sim.host_metrics[ctx.dataIndex].count.toLocaleString('en-US')}`
             ]
           }
         }
@@ -1568,9 +1838,9 @@ const w = data.duplicateWindowPcts;
 new Chart(document.getElementById('strategyChart'), {
   type: 'bar',
   data: {
-    labels: ['Cache 60s TTL','Cache 30s TTL','Cache 10s TTL','Cache 5s TTL','Debounce 5s','Remoção limit=-1','Consolidação Hosts'],
+    labels: ['Cache 60s TTL','Cache 30s TTL','Cache 10s TTL','Cache 5s TTL','Debounce 5s','Remove limit=-1','Host Consolidation'],
     datasets: [{
-      label: '% de Requests Reduzidas',
+      label: '% of Reduced Requests',
       data: [
         w['60s'] || 0,
         w['30s'] || 0,
@@ -1592,7 +1862,7 @@ new Chart(document.getElementById('strategyChart'), {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw}% de redução estimada`
+          label: ctx => ` ${ctx.raw}% estimated reduction`
         }
       }
     },
@@ -1626,7 +1896,7 @@ new Chart(document.getElementById('languageChart'), {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} req (${data.languages[ctx.dataIndex].pct}%)`
+          label: ctx => ` ${ctx.raw.toLocaleString('en-US')} req (${data.languages[ctx.dataIndex].pct}%)`
         }
       }
     },
@@ -1656,13 +1926,13 @@ new Chart(document.getElementById('languageChart'), {
       labels: patterns.map(p => p.pattern.replace(' (Sparse Fieldsets)', '').replace(' (Delta)', '')),
       datasets: [
         {
-          label: 'SCI Atual (mgCO₂/req)',
+          label: 'Current SCI (mgCO₂/req)',
           data: patterns.map(p => p.sci_baseline_mg),
           backgroundColor: '#e74c3c',
           borderRadius: 4
         },
         {
-          label: 'SCI c/ Pattern (mgCO₂/req)',
+          label: 'SCI w/ Pattern (mgCO₂/req)',
           data: patterns.map(p => p.sci_optimized_mg),
           backgroundColor: '#27ae60',
           borderRadius: 4
@@ -1725,7 +1995,7 @@ new Chart(document.getElementById('languageChart'), {
         <td style="font-size:0.82rem;">${t.fields.join(', ')}</td>
         <td>${t.est_size_kb} KB</td>
         <td><strong style="color:${isBaseline ? '#e74c3c' : '#27ae60'};">${t.sci_mg} mgCO₂</strong></td>
-        <td>${t.requests ? Number(t.requests).toLocaleString('pt-BR') : '—'}</td>
+        <td>${t.requests ? Number(t.requests).toLocaleString('en-US') : '—'}</td>
         <td style="font-size:0.82rem;">${t.use_case}</td>
       </tr>`;
   });
@@ -1733,16 +2003,285 @@ new Chart(document.getElementById('languageChart'), {
   // Update conclusion text
   if (baseline) {
     document.getElementById('sci-wt-reduction').textContent =
-      baseline.reduction_pct.toFixed(1).replace('.', ',') + '%';
+      baseline.reduction_pct.toFixed(1) + '%';
     document.getElementById('sci-wt-baseline').textContent =
-      String(baseline.sci_baseline_mg).replace('.', ',');
+      String(baseline.sci_baseline_mg);
     document.getElementById('sci-wt-optimized').textContent =
-      String(baseline.sci_optimized_mg).replace('.', ',');
+      String(baseline.sci_optimized_mg);
   }
 })();
 
-// ── Fecha o bloco fetch ───────────────────────────────────────────────────────
-}).catch(err => console.error('Erro ao carregar dashboard_data.json:', err));
+// ── Parameters: charts, KPIs and tables ──────────────────────────────────────
+(function buildParameterAnalysis() {
+  const params = data.simulation?.parameter_analysis;
+  const section = document.getElementById('parametros');
+  if (!params || !params.top_parameters || !params.top_parameters.length) {
+    if (section) section.style.display = 'none';
+    return;
+  }
+
+  const fmt = n => Number(n).toLocaleString('en-US');
+  const pct = n => `${Number(n).toFixed(1)}%`;
+  const spotlight = params.spotlight || {};
+  const savings = params.parameter_savings || null;
+  const paginationPct = (spotlight.limit?.pct || 0) + (spotlight.pagesize?.pct || 0) + (spotlight.pagenumber?.pct || 0);
+  const paginationRequests = (spotlight.limit?.requests || 0) + (spotlight.pagesize?.requests || 0) + (spotlight.pagenumber?.requests || 0);
+
+  document.getElementById('param-kpi-request-pct').textContent = pct(params.requests_with_parameters_pct || 0);
+  document.getElementById('param-kpi-request-count').textContent = `${fmt(params.requests_with_parameters || 0)} original requests with query params`;
+  document.getElementById('param-kpi-total-rows').textContent = fmt(params.total_parameter_rows || 0);
+  document.getElementById('param-kpi-unique-names').textContent = `${fmt(params.unique_parameter_names || 0)} distinct parameter names`;
+  document.getElementById('param-kpi-avg-per-request').textContent = String(params.avg_parameters_per_request || 0);
+  document.getElementById('param-kpi-max-per-request').textContent = `Max observed: ${fmt(params.max_parameters_per_request || 0)}`;
+  document.getElementById('param-kpi-fields-pct').textContent = pct(spotlight.fields?.pct || 0);
+  document.getElementById('param-kpi-fields-count').textContent = `${fmt(spotlight.fields?.requests || 0)} requests with fields=`;
+  document.getElementById('param-fields-summary').textContent = `${fmt(spotlight.fields?.requests || 0)} requests (${pct(spotlight.fields?.pct || 0)})`;
+  document.getElementById('param-pagination-summary').textContent = `${fmt(paginationRequests)} requests (${pct(paginationPct)})`;
+  document.getElementById('param-origin-summary').textContent = `${fmt(spotlight.origin?.requests || 0)} requests (${pct(spotlight.origin?.pct || 0)})`;
+
+  if (savings && savings.by_pattern?.length) {
+    document.getElementById('param-kpi-savings-mb').textContent = fmt(Math.round(savings.total_saved_mb || 0));
+    document.getElementById('param-kpi-savings-bytes').textContent = `${fmt(Math.round(savings.total_saved_bytes || 0))} bytes estimated`;
+    document.getElementById('param-kpi-savings-pct').textContent = pct(savings.estimated_reduction_pct || 0);
+    document.getElementById('param-kpi-savings-rows').textContent = `${fmt(savings.row_count || 0)} endpoint+parameter+pattern records`;
+  } else {
+    document.getElementById('param-savings-kpi-card').style.display = 'none';
+    document.getElementById('param-savings-reduction-kpi-card').style.display = 'none';
+    document.getElementById('parameterSavingsCharts').style.display = 'none';
+    document.getElementById('parameterSavingsTableCard').style.display = 'none';
+  }
+
+  new Chart(document.getElementById('parameterUsageChart'), {
+    type: 'bar',
+    data: {
+      labels: params.top_parameters.map(p => p.parameter_name),
+      datasets: [{
+        label: 'Original requests using parameter',
+        data: params.top_parameters.map(p => p.request_count),
+        backgroundColor: BLUES,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${fmt(ctx.raw)} original requests (${params.top_parameters[ctx.dataIndex].request_pct}%)`
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => Number(v).toLocaleString('en-US') } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('parameterHostChart'), {
+    type: 'bar',
+    data: {
+      labels: params.host_breakdown.map(h => h.host.replace('tourism.','T.').replace('mobility.','M.').replace('.opendatahub','.ODH')),
+      datasets: [{
+        label: 'Parameterized requests (%)',
+        data: params.host_breakdown.map(h => h.parameterized_request_pct),
+        backgroundColor: GREENS,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: ctx => params.host_breakdown[ctx[0].dataIndex].host,
+            label: ctx => [
+              ` ${ctx.raw}% parameterized requests`,
+              ` Requests: ${fmt(params.host_breakdown[ctx.dataIndex].requests_with_parameters)}`,
+              ` Parameter rows: ${fmt(params.host_breakdown[ctx.dataIndex].parameter_rows)}`
+            ]
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => `${v}%` }, max: 100 },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+
+  const paramTableBody = document.getElementById('parameterTableBody');
+  params.top_parameters.forEach(p => {
+    paramTableBody.innerHTML += `
+      <tr>
+        <td><code>${p.parameter_name}</code></td>
+        <td>${fmt(p.request_count)}</td>
+        <td>${p.request_pct}%</td>
+        <td>${fmt(p.parameter_rows)}</td>
+        <td>${fmt(p.host_count)}</td>
+      </tr>`;
+  });
+
+  const paramValuesTableBody = document.getElementById('parameterValuesTableBody');
+  params.top_parameter_values.forEach(p => {
+    paramValuesTableBody.innerHTML += `
+      <tr>
+        <td><code>${p.parameter_name}</code></td>
+        <td style="font-size:0.82rem;word-break:break-word;">${p.parameter_value}</td>
+        <td>${fmt(p.occurrences)}</td>
+      </tr>`;
+  });
+
+  const pagesizeDist = params.pagesize_value_distribution || [];
+  const pagesizeDistBody = document.getElementById('pagesizeDistributionTableBody');
+  if (pagesizeDist.length) {
+    pagesizeDist.forEach(row => {
+      pagesizeDistBody.innerHTML += `
+        <tr>
+          <td><code>${row.pagesize_value}</code></td>
+          <td>${fmt(row.occurrences)}</td>
+          <td>${row.pct_of_simulated}%</td>
+        </tr>`;
+    });
+  } else {
+    document.getElementById('pagesizeFocusGrid').style.display = 'none';
+  }
+
+  const pagesizeFocus = params.pagesize_focus || {};
+  const focusBody = document.getElementById('pagesizeFocusTableBody');
+  if (pagesizeFocus.original || pagesizeFocus.simulated) {
+    const original20000 = pagesizeFocus.original?.pagesize_20000 || 0;
+    const original10000 = pagesizeFocus.original?.pagesize_10000 || 0;
+    const simulated20000 = pagesizeFocus.simulated?.pagesize_20000 || 0;
+    const simulated10000 = pagesizeFocus.simulated?.pagesize_10000 || 0;
+
+    focusBody.innerHTML += `
+      <tr>
+        <td>Original log</td>
+        <td>${fmt(original20000)}</td>
+        <td>${fmt(original10000)}</td>
+      </tr>
+      <tr>
+        <td>Simulated and saved</td>
+        <td>${fmt(simulated20000)}</td>
+        <td>${fmt(simulated10000)}</td>
+      </tr>`;
+  }
+
+  if (savings && savings.by_pattern?.length) {
+    new Chart(document.getElementById('parameterSavingsPatternChart'), {
+      type: 'bar',
+      data: {
+        labels: savings.by_pattern.map(p => p.pattern),
+        datasets: [{
+          label: 'Estimated savings (MB)',
+          data: savings.by_pattern.map(p => p.estimated_saved_mb),
+          backgroundColor: GREENS,
+          borderRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${fmt(Math.round(ctx.raw))} MB (${fmt(savings.by_pattern[ctx.dataIndex].request_count)} requests)`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+          y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => `${Number(v).toLocaleString('en-US')} MB` } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('parameterSavingsParameterChart'), {
+      type: 'bar',
+      data: {
+        labels: savings.top_by_parameter.map(p => p.parameter_name),
+        datasets: [{
+          label: 'Estimated savings (MB)',
+          data: savings.top_by_parameter.map(p => p.estimated_saved_mb),
+          backgroundColor: BLUES,
+          borderRadius: 5
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.raw.toLocaleString('en-US')} MB (${fmt(savings.top_by_parameter[ctx.dataIndex].request_count)} requests)`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => `${Number(v).toLocaleString('en-US')} MB` } },
+          y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+        }
+      }
+    });
+
+    const savingsTableBody = document.getElementById('parameterSavingsTableBody');
+    let savingsData = savings.top_endpoint_parameter_pattern || [];
+    
+    // Function to render table based on selected pattern
+    const renderSavingsTable = (selectedPattern) => {
+      savingsTableBody.innerHTML = '';
+      const filtered = selectedPattern === 'all' 
+        ? savingsData 
+        : savingsData.filter(r => r.pattern === selectedPattern);
+      
+      filtered.forEach(r => {
+        savingsTableBody.innerHTML += `
+          <tr data-pattern="${r.pattern}">
+            <td>${r.host}</td>
+            <td style="font-size:0.82rem;word-break:break-word;">${r.uri}</td>
+            <td><code>${r.parameter_name}</code></td>
+            <td>${r.pattern}</td>
+            <td>${fmt(r.request_count)}</td>
+            <td><strong>${Number(r.estimated_saved_mb || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
+          </tr>`;
+      });
+    };
+    
+    // Initial render
+    renderSavingsTable('all');
+    
+    // Setup pattern filter buttons
+    document.querySelectorAll('.pattern-filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Update active button styling
+        document.querySelectorAll('.pattern-filter-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.background = 'white';
+          b.style.color = '#333';
+        });
+        e.target.classList.add('active');
+        e.target.style.background = '#007bff';
+        e.target.style.color = 'white';
+        
+        // Render table with selected pattern
+        renderSavingsTable(e.target.dataset.pattern);
+      });
+    });
+  }
+})();
+
+// ── Close fetch block ────────────────────────────────────────────────────────
+}).catch(err => console.error('Error loading dashboard_data.json:', err));
 
 // ── Nav active on scroll ──────────────────────────────────────────────────────
 const sections = document.querySelectorAll('section[id]');

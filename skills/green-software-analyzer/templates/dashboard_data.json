@@ -10025,77 +10025,959 @@
     }
   },
   "simulation": {
-    "total_simulated": 296423,
-    "avg_size_kb": 11.7,
-    "avg_latency_s": 0.247,
+    "total_simulated": 296305,
+    "avg_size_kb": 11.9,
+    "avg_latency_s": 0.248,
     "patterns": [
       {
         "pattern": "Green by Default",
-        "count": 281811,
+        "count": 281767,
         "pct": 95.1,
-        "avg_size_kb": 11.5,
-        "avg_latency_s": 0.248
+        "avg_size_kb": 11.4,
+        "avg_latency_s": 0.249,
+        "estimated_saved_kb_total": 1934787.7
       },
       {
         "pattern": "Just Latest Updates (Delta)",
-        "count": 100146,
+        "count": 100127,
         "pct": 33.8,
-        "avg_size_kb": 14.4,
-        "avg_latency_s": 0.218
+        "avg_size_kb": 14.5,
+        "avg_latency_s": 0.219,
+        "estimated_saved_kb_total": 1013640.8
       },
       {
         "pattern": "Wish List (Sparse Fieldsets)",
-        "count": 17246,
+        "count": 17260,
         "pct": 5.8,
-        "avg_size_kb": 177.3,
-        "avg_latency_s": 0.45
+        "avg_size_kb": 177.0,
+        "avg_latency_s": 0.446,
+        "estimated_saved_kb_total": 1832596.5
       },
       {
         "pattern": "Wish Template",
-        "count": 283107,
+        "count": 283031,
         "pct": 95.5,
-        "avg_size_kb": 12.2,
-        "avg_latency_s": 0.234
+        "avg_size_kb": 11.9,
+        "avg_latency_s": 0.234,
+        "estimated_saved_kb_total": 2956043.9
       }
     ],
     "host_metrics": [
       {
         "host": "mobility.api.opendatahub.com",
-        "count": 151137,
-        "avg_size_kb": 7.3,
+        "count": 151114,
+        "avg_size_kb": 6.9,
         "avg_latency_s": 0.222
       },
       {
         "host": "tourism.api.opendatahub.com",
-        "count": 123442,
-        "avg_size_kb": 12.5,
+        "count": 123436,
+        "avg_size_kb": 13.2,
         "avg_latency_s": 0.226
       },
       {
         "host": "tourism.opendatahub.bz.it",
-        "count": 18242,
-        "avg_size_kb": 34.9,
-        "avg_latency_s": 0.589
+        "count": 18160,
+        "avg_size_kb": 29.5,
+        "avg_latency_s": 0.59
       },
       {
         "host": "tourism.opendatahub.com",
-        "count": 2952,
-        "avg_size_kb": 11.7,
-        "avg_latency_s": 0.278
+        "count": 2949,
+        "avg_size_kb": 11.8,
+        "avg_latency_s": 0.277
       },
       {
         "host": "mobility.api.opendatahub.bz.it",
-        "count": 596,
-        "avg_size_kb": 183.1,
+        "count": 592,
+        "avg_size_kb": 179.2,
         "avg_latency_s": 0.657
       },
       {
         "host": "tourism.api.opendatahub.bz.it",
         "count": 54,
-        "avg_size_kb": 571.3,
-        "avg_latency_s": 0.49
+        "avg_size_kb": 525.1,
+        "avg_latency_s": 0.495
       }
-    ]
+    ],
+    "estimated_traffic_totals": {
+      "source": "estimated_from_simulated_sizes_weighted_by_original_links",
+      "total_original_requests": 1095284,
+      "linked_original_requests": 1095003,
+      "unlinked_original_requests": 281,
+      "linked_original_requests_pct": 99.97,
+      "request": {
+        "bytes": 241235057,
+        "kb": 235581.11,
+        "mb": 230.06,
+        "gb": 0.225
+      },
+      "response": {
+        "bytes": 641674123228,
+        "kb": 626634885.96,
+        "mb": 611948.13,
+        "gb": 597.606
+      },
+      "total": {
+        "bytes": 641915358285,
+        "kb": 626870467.08,
+        "mb": 612178.19,
+        "gb": 597.83
+      }
+    },
+    "parameter_analysis": {
+      "source": "original_log",
+      "total_parameter_rows": 5221980,
+      "requests_with_parameters": 1023677,
+      "requests_with_parameters_pct": 93.5,
+      "requests_without_parameters": 71607,
+      "unique_parameter_names": 92,
+      "avg_parameters_per_request": 5.1,
+      "max_parameters_per_request": 12,
+      "top_parameters": [
+        {
+          "parameter_name": "language",
+          "parameter_rows": 478725,
+          "request_count": 478725,
+          "request_pct": 43.7,
+          "host_count": 5
+        },
+        {
+          "parameter_name": "pagesize",
+          "parameter_rows": 465414,
+          "request_count": 465414,
+          "request_pct": 42.5,
+          "host_count": 5
+        },
+        {
+          "parameter_name": "fields",
+          "parameter_rows": 409448,
+          "request_count": 409448,
+          "request_pct": 37.4,
+          "host_count": 3
+        },
+        {
+          "parameter_name": "referer",
+          "parameter_rows": 394007,
+          "request_count": 394007,
+          "request_pct": 36.0,
+          "host_count": 3
+        },
+        {
+          "parameter_name": "where",
+          "parameter_rows": 372212,
+          "request_count": 372212,
+          "request_pct": 34.0,
+          "host_count": 2
+        },
+        {
+          "parameter_name": "limit",
+          "parameter_rows": 350362,
+          "request_count": 350362,
+          "request_pct": 32.0,
+          "host_count": 3
+        },
+        {
+          "parameter_name": "select",
+          "parameter_rows": 342912,
+          "request_count": 342912,
+          "request_pct": 31.3,
+          "host_count": 2
+        },
+        {
+          "parameter_name": "offset",
+          "parameter_rows": 337236,
+          "request_count": 337236,
+          "request_pct": 30.8,
+          "host_count": 3
+        },
+        {
+          "parameter_name": "removenullvalues",
+          "parameter_rows": 330737,
+          "request_count": 330737,
+          "request_pct": 30.2,
+          "host_count": 4
+        },
+        {
+          "parameter_name": "active",
+          "parameter_rows": 309203,
+          "request_count": 309203,
+          "request_pct": 28.2,
+          "host_count": 3
+        },
+        {
+          "parameter_name": "poitype",
+          "parameter_rows": 152764,
+          "request_count": 152764,
+          "request_pct": 13.9,
+          "host_count": 4
+        },
+        {
+          "parameter_name": "origin",
+          "parameter_rows": 115108,
+          "request_count": 115106,
+          "request_pct": 10.5,
+          "host_count": 4
+        }
+      ],
+      "top_parameter_values": [
+        {
+          "parameter_name": "offset",
+          "parameter_value": "0",
+          "occurrences": 337236
+        },
+        {
+          "parameter_name": "active",
+          "parameter_value": "true",
+          "occurrences": 309200
+        },
+        {
+          "parameter_name": "removenullvalues",
+          "parameter_value": "true",
+          "occurrences": 306450
+        },
+        {
+          "parameter_name": "limit",
+          "parameter_value": "50000",
+          "occurrences": 273768
+        },
+        {
+          "parameter_name": "select",
+          "parameter_value": "mvalue",
+          "occurrences": 273768
+        },
+        {
+          "parameter_name": "language",
+          "parameter_value": "de",
+          "occurrences": 264305
+        },
+        {
+          "parameter_name": "pagesize",
+          "parameter_value": "10000",
+          "occurrences": 211554
+        },
+        {
+          "parameter_name": "pagesize",
+          "parameter_value": "20000",
+          "occurrences": 195070
+        },
+        {
+          "parameter_name": "referer",
+          "parameter_value": "SuedtirolMobilAndroid",
+          "occurrences": 161948
+        },
+        {
+          "parameter_name": "poitype",
+          "parameter_value": "168",
+          "occurrences": 152315
+        },
+        {
+          "parameter_name": "language",
+          "parameter_value": "it",
+          "occurrences": 142967
+        },
+        {
+          "parameter_name": "referer",
+          "parameter_value": "SuedtirolMobilIos",
+          "occurrences": 134902
+        },
+        {
+          "parameter_name": "fields",
+          "parameter_value": "Id,Detail.de.Title,ContactInfos.de.City",
+          "occurrences": 117958
+        },
+        {
+          "parameter_name": "fields",
+          "parameter_value": "Id,AccoDetail.de.Name,AccoDetail.de.City",
+          "occurrences": 117761
+        },
+        {
+          "parameter_name": "sortorder",
+          "parameter_value": "ASC",
+          "occurrences": 101538
+        }
+      ],
+      "pagesize_value_distribution": [
+        {
+          "pagesize_value": "10000",
+          "occurrences": 211554,
+          "pct_of_simulated": 19.315
+        },
+        {
+          "pagesize_value": "20000",
+          "occurrences": 195070,
+          "pct_of_simulated": 17.81
+        },
+        {
+          "pagesize_value": "250",
+          "occurrences": 38964,
+          "pct_of_simulated": 3.557
+        },
+        {
+          "pagesize_value": "100",
+          "occurrences": 6609,
+          "pct_of_simulated": 0.603
+        },
+        {
+          "pagesize_value": "12",
+          "occurrences": 3546,
+          "pct_of_simulated": 0.324
+        },
+        {
+          "pagesize_value": "3",
+          "occurrences": 2070,
+          "pct_of_simulated": 0.189
+        },
+        {
+          "pagesize_value": "10",
+          "occurrences": 1104,
+          "pct_of_simulated": 0.101
+        },
+        {
+          "pagesize_value": "24",
+          "occurrences": 995,
+          "pct_of_simulated": 0.091
+        },
+        {
+          "pagesize_value": "1000",
+          "occurrences": 889,
+          "pct_of_simulated": 0.081
+        },
+        {
+          "pagesize_value": "2000",
+          "occurrences": 875,
+          "pct_of_simulated": 0.08
+        },
+        {
+          "pagesize_value": "50000",
+          "occurrences": 741,
+          "pct_of_simulated": 0.068
+        },
+        {
+          "pagesize_value": "26",
+          "occurrences": 355,
+          "pct_of_simulated": 0.032
+        },
+        {
+          "pagesize_value": "30",
+          "occurrences": 355,
+          "pct_of_simulated": 0.032
+        },
+        {
+          "pagesize_value": "20",
+          "occurrences": 323,
+          "pct_of_simulated": 0.029
+        },
+        {
+          "pagesize_value": "5000",
+          "occurrences": 300,
+          "pct_of_simulated": 0.027
+        }
+      ],
+      "pagesize_focus": {
+        "original": {
+          "pagesize_20000": 195070,
+          "pagesize_10000": 211554
+        },
+        "simulated": {
+          "pagesize_20000": 58,
+          "pagesize_10000": 14286
+        }
+      },
+      "host_breakdown": [
+        {
+          "host": "tourism.opendatahub.bz.it",
+          "total_requests": 472971,
+          "requests_with_parameters": 444915,
+          "parameterized_request_pct": 94.1,
+          "parameter_rows": 2483735
+        },
+        {
+          "host": "mobility.api.opendatahub.com",
+          "total_requests": 380272,
+          "requests_with_parameters": 369183,
+          "parameterized_request_pct": 97.1,
+          "parameter_rows": 1410826
+        },
+        {
+          "host": "tourism.api.opendatahub.com",
+          "total_requests": 179988,
+          "requests_with_parameters": 149791,
+          "parameterized_request_pct": 83.2,
+          "parameter_rows": 1050314
+        },
+        {
+          "host": "tourism.opendatahub.com",
+          "total_requests": 38895,
+          "requests_with_parameters": 36714,
+          "parameterized_request_pct": 94.4,
+          "parameter_rows": 192856
+        },
+        {
+          "host": "mobility.api.opendatahub.bz.it",
+          "total_requests": 19392,
+          "requests_with_parameters": 19350,
+          "parameterized_request_pct": 99.8,
+          "parameter_rows": 65859
+        },
+        {
+          "host": "tourism.api.opendatahub.bz.it",
+          "total_requests": 3766,
+          "requests_with_parameters": 3724,
+          "parameterized_request_pct": 98.9,
+          "parameter_rows": 18390
+        }
+      ],
+      "spotlight": {
+        "fields": {
+          "requests": 409448,
+          "pct": 37.4
+        },
+        "limit": {
+          "requests": 350362,
+          "pct": 32.0
+        },
+        "pagesize": {
+          "requests": 465414,
+          "pct": 42.5
+        },
+        "pagenumber": {
+          "requests": 86748,
+          "pct": 7.9
+        },
+        "origin": {
+          "requests": 115106,
+          "pct": 10.5
+        }
+      },
+      "parameter_savings": {
+        "row_count": 3812751,
+        "total_requests": 9483451,
+        "total_response_bytes": 4715131826983,
+        "total_response_mb": 4496700.12,
+        "total_saved_bytes": 3816753834207.64,
+        "total_saved_mb": 3639940.1,
+        "estimated_reduction_pct": 80.9,
+        "top_by_parameter": [
+          {
+            "parameter_name": "pagesize",
+            "request_count": 574060,
+            "estimated_saved_bytes": 621693720870.65,
+            "estimated_saved_mb": 592893.33,
+            "pattern_count": 4
+          },
+          {
+            "parameter_name": "language",
+            "request_count": 651859,
+            "estimated_saved_bytes": 585283393325.21,
+            "estimated_saved_mb": 558169.74,
+            "pattern_count": 4
+          },
+          {
+            "parameter_name": "fields",
+            "request_count": 409268,
+            "estimated_saved_bytes": 432206554402.76,
+            "estimated_saved_mb": 412184.29,
+            "pattern_count": 2
+          },
+          {
+            "parameter_name": "referer",
+            "request_count": 403153,
+            "estimated_saved_bytes": 432107852502.92,
+            "estimated_saved_mb": 412090.16,
+            "pattern_count": 4
+          },
+          {
+            "parameter_name": "removenullvalues",
+            "request_count": 346642,
+            "estimated_saved_bytes": 380123668769.44,
+            "estimated_saved_mb": 362514.18,
+            "pattern_count": 3
+          },
+          {
+            "parameter_name": "active",
+            "request_count": 311516,
+            "estimated_saved_bytes": 337690257576.8,
+            "estimated_saved_mb": 322046.53,
+            "pattern_count": 3
+          },
+          {
+            "parameter_name": "pagenumber",
+            "request_count": 210270,
+            "estimated_saved_bytes": 191168753447.41,
+            "estimated_saved_mb": 182312.73,
+            "pattern_count": 4
+          },
+          {
+            "parameter_name": "poitype",
+            "request_count": 152560,
+            "estimated_saved_bytes": 170533524233.84,
+            "estimated_saved_mb": 162633.44,
+            "pattern_count": 3
+          },
+          {
+            "parameter_name": "limit",
+            "request_count": 792136,
+            "estimated_saved_bytes": 134738641782.51,
+            "estimated_saved_mb": 128496.78,
+            "pattern_count": 4
+          },
+          {
+            "parameter_name": "distinct",
+            "request_count": 152661,
+            "estimated_saved_bytes": 132953680081.42,
+            "estimated_saved_mb": 126794.51,
+            "pattern_count": 4
+          },
+          {
+            "parameter_name": "where",
+            "request_count": 854988,
+            "estimated_saved_bytes": 70903887112.69,
+            "estimated_saved_mb": 67619.22,
+            "pattern_count": 4
+          },
+          {
+            "parameter_name": "shownull",
+            "request_count": 49868,
+            "estimated_saved_bytes": 61448504394.76,
+            "estimated_saved_mb": 58601.86,
+            "pattern_count": 4
+          }
+        ],
+        "by_pattern": [
+          {
+            "pattern": "Wish Template",
+            "request_count": 5197846,
+            "estimated_saved_bytes": 3047600331669.66,
+            "estimated_saved_mb": 2906418.16,
+            "parameter_count": 88
+          },
+          {
+            "pattern": "Green by Default",
+            "request_count": 2684565,
+            "estimated_saved_bytes": 322066271457.01,
+            "estimated_saved_mb": 307146.33,
+            "parameter_count": 86
+          },
+          {
+            "pattern": "Wish List",
+            "request_count": 519863,
+            "estimated_saved_bytes": 321201167671.18,
+            "estimated_saved_mb": 306321.3,
+            "parameter_count": 63
+          },
+          {
+            "pattern": "Just Latest Updates",
+            "request_count": 1081177,
+            "estimated_saved_bytes": 125886063427.45,
+            "estimated_saved_mb": 120054.31,
+            "parameter_count": 32
+          }
+        ],
+        "top_endpoint_parameter_pattern": [
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "limit",
+            "pattern": "Green by Default",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "offset",
+            "pattern": "Green by Default",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "shownull",
+            "pattern": "Green by Default",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "distinct",
+            "pattern": "Green by Default",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "timezone",
+            "pattern": "Green by Default",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "pagenumber",
+            "pattern": "Green by Default",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "pagesize",
+            "pattern": "Green by Default",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "type",
+            "pattern": "Green by Default",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "removenullvalues",
+            "pattern": "Green by Default",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "getasidarray",
+            "pattern": "Green by Default",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "limit",
+            "pattern": "Just Latest Updates",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 12889201815.0,
+            "estimated_saved_mb": 12292.1
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "offset",
+            "pattern": "Just Latest Updates",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 12889201815.0,
+            "estimated_saved_mb": 12292.1
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "shownull",
+            "pattern": "Just Latest Updates",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 12889201815.0,
+            "estimated_saved_mb": 12292.1
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "distinct",
+            "pattern": "Just Latest Updates",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 12889201815.0,
+            "estimated_saved_mb": 12292.1
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "timezone",
+            "pattern": "Just Latest Updates",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 12889201815.0,
+            "estimated_saved_mb": 12292.1
+          },
+          {
+            "host": "mobility.api.opendatahub.bz.it",
+            "uri": "/v2/flat%2Cnode/EChargingPlug/*/latest?distinct=true&limit=-1&where=scoordinate.bbc.(10,46,12.8,47.2)",
+            "parameter_name": "distinct",
+            "pattern": "Just Latest Updates",
+            "request_count": 942,
+            "total_response_bytes": 5377670760,
+            "estimated_saved_bytes": 3764369532.0,
+            "estimated_saved_mb": 3589.98
+          },
+          {
+            "host": "mobility.api.opendatahub.bz.it",
+            "uri": "/v2/flat%2Cnode/EChargingPlug/*/latest?distinct=true&limit=-1&where=scoordinate.bbc.(10,46,12.8,47.2)",
+            "parameter_name": "limit",
+            "pattern": "Just Latest Updates",
+            "request_count": 942,
+            "total_response_bytes": 5377670760,
+            "estimated_saved_bytes": 3764369532.0,
+            "estimated_saved_mb": 3589.98
+          },
+          {
+            "host": "mobility.api.opendatahub.bz.it",
+            "uri": "/v2/flat%2Cnode/EChargingPlug/*/latest?distinct=true&limit=-1&where=scoordinate.bbc.(10,46,12.8,47.2)",
+            "parameter_name": "where",
+            "pattern": "Just Latest Updates",
+            "request_count": 942,
+            "total_response_bytes": 5377670760,
+            "estimated_saved_bytes": 3764369532.0,
+            "estimated_saved_mb": 3589.98
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/EChargingPlug/*/latest?distinct=true&limit=-1&where=scoordinate.bbc.(10,46,12.8,47.2)",
+            "parameter_name": "distinct",
+            "pattern": "Just Latest Updates",
+            "request_count": 942,
+            "total_response_bytes": 5377670760,
+            "estimated_saved_bytes": 3764369532.0,
+            "estimated_saved_mb": 3589.98
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/EChargingPlug/*/latest?distinct=true&limit=-1&where=scoordinate.bbc.(10,46,12.8,47.2)",
+            "parameter_name": "limit",
+            "pattern": "Just Latest Updates",
+            "request_count": 942,
+            "total_response_bytes": 5377670760,
+            "estimated_saved_bytes": 3764369532.0,
+            "estimated_saved_mb": 3589.98
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "limit",
+            "pattern": "Wish List",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "offset",
+            "pattern": "Wish List",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "shownull",
+            "pattern": "Wish List",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "distinct",
+            "pattern": "Wish List",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "mobility.api.opendatahub.com",
+            "uri": "/v2/flat%2Cnode/%2A/%2A/latest?limit=-1&offset=0&shownull=false&distinct=true&timezone=UTC",
+            "parameter_name": "timezone",
+            "pattern": "Wish List",
+            "request_count": 189,
+            "total_response_bytes": 18413145450,
+            "estimated_saved_bytes": 11047887270.0,
+            "estimated_saved_mb": 10536.09
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "pagenumber",
+            "pattern": "Wish List",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "pagesize",
+            "pattern": "Wish List",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "type",
+            "pattern": "Wish List",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "removenullvalues",
+            "pattern": "Wish List",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.api.opendatahub.com",
+            "uri": "/v1/ODHActivityPoi?pagenumber=1&pagesize=5000&type=128&removenullvalues=false&getasidarray=false",
+            "parameter_name": "getasidarray",
+            "pattern": "Wish List",
+            "request_count": 200,
+            "total_response_bytes": 15020253400,
+            "estimated_saved_bytes": 9012152040.0,
+            "estimated_saved_mb": 8594.66
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/ODHActivityPoi?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CDetail.de.Title%2CContactInfos.de.City&pagesize=20000&poitype=168&active=true&removenullvalues=true",
+            "parameter_name": "language",
+            "pattern": "Wish Template",
+            "request_count": 42586,
+            "total_response_bytes": 53445046726,
+            "estimated_saved_bytes": 47031641118.88,
+            "estimated_saved_mb": 44852.87
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/ODHActivityPoi?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CDetail.de.Title%2CContactInfos.de.City&pagesize=20000&poitype=168&active=true&removenullvalues=true",
+            "parameter_name": "referer",
+            "pattern": "Wish Template",
+            "request_count": 42586,
+            "total_response_bytes": 53445046726,
+            "estimated_saved_bytes": 47031641118.88,
+            "estimated_saved_mb": 44852.87
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/ODHActivityPoi?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CDetail.de.Title%2CContactInfos.de.City&pagesize=20000&poitype=168&active=true&removenullvalues=true",
+            "parameter_name": "fields",
+            "pattern": "Wish Template",
+            "request_count": 42586,
+            "total_response_bytes": 53445046726,
+            "estimated_saved_bytes": 47031641118.88,
+            "estimated_saved_mb": 44852.87
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/ODHActivityPoi?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CDetail.de.Title%2CContactInfos.de.City&pagesize=20000&poitype=168&active=true&removenullvalues=true",
+            "parameter_name": "pagesize",
+            "pattern": "Wish Template",
+            "request_count": 42586,
+            "total_response_bytes": 53445046726,
+            "estimated_saved_bytes": 47031641118.88,
+            "estimated_saved_mb": 44852.87
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/ODHActivityPoi?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CDetail.de.Title%2CContactInfos.de.City&pagesize=20000&poitype=168&active=true&removenullvalues=true",
+            "parameter_name": "poitype",
+            "pattern": "Wish Template",
+            "request_count": 42586,
+            "total_response_bytes": 53445046726,
+            "estimated_saved_bytes": 47031641118.88,
+            "estimated_saved_mb": 44852.87
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/ODHActivityPoi?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CDetail.de.Title%2CContactInfos.de.City&pagesize=20000&poitype=168&active=true&removenullvalues=true",
+            "parameter_name": "active",
+            "pattern": "Wish Template",
+            "request_count": 42586,
+            "total_response_bytes": 53445046726,
+            "estimated_saved_bytes": 47031641118.88,
+            "estimated_saved_mb": 44852.87
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/ODHActivityPoi?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CDetail.de.Title%2CContactInfos.de.City&pagesize=20000&poitype=168&active=true&removenullvalues=true",
+            "parameter_name": "removenullvalues",
+            "pattern": "Wish Template",
+            "request_count": 42586,
+            "total_response_bytes": 53445046726,
+            "estimated_saved_bytes": 47031641118.88,
+            "estimated_saved_mb": 44852.87
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/Accommodation?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CAccoDetail.de.Name%2CAccoDetail.de.City&pagesize=10000&active=true&removenullvalues=true",
+            "parameter_name": "language",
+            "pattern": "Wish Template",
+            "request_count": 42524,
+            "total_response_bytes": 52875107032,
+            "estimated_saved_bytes": 46530094188.16,
+            "estimated_saved_mb": 44374.56
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/Accommodation?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CAccoDetail.de.Name%2CAccoDetail.de.City&pagesize=10000&active=true&removenullvalues=true",
+            "parameter_name": "referer",
+            "pattern": "Wish Template",
+            "request_count": 42524,
+            "total_response_bytes": 52875107032,
+            "estimated_saved_bytes": 46530094188.16,
+            "estimated_saved_mb": 44374.56
+          },
+          {
+            "host": "tourism.opendatahub.bz.it",
+            "uri": "/v1/STA/Accommodation?language=de&referer=SuedtirolMobilAndroid&fields=Id%2CAccoDetail.de.Name%2CAccoDetail.de.City&pagesize=10000&active=true&removenullvalues=true",
+            "parameter_name": "fields",
+            "pattern": "Wish Template",
+            "request_count": 42524,
+            "total_response_bytes": 52875107032,
+            "estimated_saved_bytes": 46530094188.16,
+            "estimated_saved_mb": 44374.56
+          }
+        ]
+      }
+    }
   },
   "sci": {
     "constants": {
@@ -10109,13 +10991,13 @@
     "patterns": [
       {
         "pattern": "Green by Default",
-        "count": 281811,
-        "avg_size_kb": 11.5,
-        "avg_latency_s": 0.248,
-        "sci_baseline_mg": 1.6209,
-        "sci_optimized_mg": 1.1377,
+        "count": 281767,
+        "avg_size_kb": 11.4,
+        "avg_latency_s": 0.249,
+        "sci_baseline_mg": 1.6273,
+        "sci_optimized_mg": 1.1422,
         "reduction_pct": 29.8,
-        "savings_g_total": 136.17,
+        "savings_g_total": 136.69,
         "e_network_pct": 0.2,
         "e_compute_pct": 99.8,
         "opt_size_kb": 4.6,
@@ -10124,51 +11006,51 @@
       },
       {
         "pattern": "Just Latest Updates (Delta)",
-        "count": 100146,
-        "avg_size_kb": 14.4,
-        "avg_latency_s": 0.218,
-        "sci_baseline_mg": 1.4274,
-        "sci_optimized_mg": 0.8606,
+        "count": 100127,
+        "avg_size_kb": 14.5,
+        "avg_latency_s": 0.219,
+        "sci_baseline_mg": 1.4339,
+        "sci_optimized_mg": 0.8645,
         "reduction_pct": 39.7,
-        "savings_g_total": 56.76,
+        "savings_g_total": 57.01,
         "e_network_pct": 0.2,
         "e_compute_pct": 99.8,
-        "opt_size_kb": 4.3,
+        "opt_size_kb": 4.4,
         "opt_latency_s": 0.131,
         "optimization": "Enviar apenas campos alterados (delta)"
       },
       {
         "pattern": "Wish List (Sparse Fieldsets)",
-        "count": 17246,
-        "avg_size_kb": 177.3,
-        "avg_latency_s": 0.45,
-        "sci_baseline_mg": 2.9678,
-        "sci_optimized_mg": 2.0687,
+        "count": 17260,
+        "avg_size_kb": 177.0,
+        "avg_latency_s": 0.446,
+        "sci_baseline_mg": 2.9418,
+        "sci_optimized_mg": 2.0505,
         "reduction_pct": 30.3,
-        "savings_g_total": 15.51,
+        "savings_g_total": 15.38,
         "e_network_pct": 1.4,
         "e_compute_pct": 98.6,
-        "opt_size_kb": 70.9,
-        "opt_latency_s": 0.315,
+        "opt_size_kb": 70.8,
+        "opt_latency_s": 0.312,
         "optimization": "Forçar uso de fields= em todos os clientes"
       },
       {
         "pattern": "Wish Template",
-        "count": 283107,
-        "avg_size_kb": 12.2,
+        "count": 283031,
+        "avg_size_kb": 11.9,
         "avg_latency_s": 0.234,
-        "sci_baseline_mg": 1.5304,
+        "sci_baseline_mg": 1.5303,
         "sci_optimized_mg": 0.7706,
         "reduction_pct": 49.6,
-        "savings_g_total": 215.1,
+        "savings_g_total": 215.02,
         "e_network_pct": 0.2,
         "e_compute_pct": 99.8,
-        "opt_size_kb": 1.5,
+        "opt_size_kb": 1.4,
         "opt_latency_s": 0.117,
         "optimization": "Templates pré-definidos (summary, map_view, detail_full)"
       }
     ],
-    "total_savings_g": 423.5,
+    "total_savings_g": 424.1,
     "wish_templates": [
       {
         "name": "listing_de",

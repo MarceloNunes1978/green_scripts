@@ -7,14 +7,18 @@ import matplotlib.patches as mpatches
 import re
 import os
 
-os.makedirs('/analysis/output/charts', exist_ok=True)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_LOGS = os.path.join(SCRIPT_DIR, '../../../logs/unified_logs.csv')
+OUTPUT_DIR = os.path.join(SCRIPT_DIR, 'analysis/output/charts')
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Paleta green software
 COLORS = ['#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#3498db', '#2980b9', '#9b59b6', '#8e44ad', '#e74c3c', '#c0392b']
 GREEN_PALETTE = ['#1a7a4a', '#2ecc71', '#27ae60', '#1abc9c', '#16a085', '#0e6655', '#0a5c45', '#3d9970', '#52be80', '#82e0aa']
 
 # ─── Carregar dados ───────────────────────────────────────────────────────────
-df = pd.read_csv('/logs/log_total.csv')
+df = pd.read_csv(CSV_LOGS)
 df.columns = ['timestamp', 'host', 'uri']
 df['timestamp'] = pd.to_datetime(df['timestamp'], format='%b %d, %Y @ %H:%M:%S.%f')
 df = df.sort_values('timestamp').reset_index(drop=True)
@@ -50,7 +54,7 @@ ax.grid(True, alpha=0.3, linestyle='--')
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 plt.tight_layout()
-plt.savefig('/analysis/output/charts/requests_per_minute.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, 'requests_per_minute.png'), dpi=150, bbox_inches='tight')
 plt.close()
 print("✅ Chart 1 salvo")
 
@@ -69,7 +73,7 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.grid(True, axis='x', alpha=0.3, linestyle='--')
 plt.tight_layout()
-plt.savefig('/analysis/output/charts/requests_by_host.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, 'requests_by_host.png'), dpi=150, bbox_inches='tight')
 plt.close()
 print("✅ Chart 2 salvo")
 
@@ -91,7 +95,7 @@ for autotext in autotexts:
     autotext.set_fontweight('bold')
 ax.set_title('Distribuição de Requests por Categoria de API', fontsize=14, fontweight='bold', pad=15)
 plt.tight_layout()
-plt.savefig('/analysis/output/charts/requests_by_category.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, 'requests_by_category.png'), dpi=150, bbox_inches='tight')
 plt.close()
 print("✅ Chart 3 salvo")
 
@@ -128,7 +132,7 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.grid(True, axis='y', alpha=0.3, linestyle='--')
 plt.tight_layout()
-plt.savefig('/analysis/output/charts/duplicate_windows.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, 'duplicate_windows.png'), dpi=150, bbox_inches='tight')
 plt.close()
 print("✅ Chart 4 salvo")
 
@@ -151,7 +155,7 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.grid(True, axis='x', alpha=0.3, linestyle='--')
 plt.tight_layout()
-plt.savefig('/analysis/output/charts/top_endpoints.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, 'top_endpoints.png'), dpi=150, bbox_inches='tight')
 plt.close()
 print("✅ Chart 5 salvo")
 
@@ -177,7 +181,7 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.grid(True, axis='y', alpha=0.3, linestyle='--')
 plt.tight_layout()
-plt.savefig('/analysis/output/charts/language_distribution.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, 'language_distribution.png'), dpi=150, bbox_inches='tight')
 plt.close()
 print("✅ Chart 6 salvo")
 
@@ -204,7 +208,7 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.grid(True, axis='x', alpha=0.3, linestyle='--')
 plt.tight_layout()
-plt.savefig('/analysis/output/charts/savings_by_strategy.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(OUTPUT_DIR, 'savings_by_strategy.png'), dpi=150, bbox_inches='tight')
 plt.close()
 print("✅ Chart 7 salvo")
 
