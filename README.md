@@ -231,6 +231,32 @@ python compute_bytes_saved.py
 python generate_dashboard_json.py
 ```
 
+## Consultas SQL por padrão de Green Software
+
+Cada arquivo contém consultas específicas para análise do respectivo padrão, incluindo totais gerais, economia por parâmetro e top endpoints.
+
+| Padrão | Arquivo |
+|--------|---------|
+| Green by Default | [`skills/green-software-analyzer/scripts/queries_green_by_default.sql`](skills/green-software-analyzer/scripts/queries_green_by_default.sql) |
+| Just Latest Updates (Delta) | [`skills/green-software-analyzer/scripts/queries_just_latest_updates.sql`](skills/green-software-analyzer/scripts/queries_just_latest_updates.sql) |
+| Wish List (Sparse Fieldsets) | [`skills/green-software-analyzer/scripts/queries_wish_list.sql`](skills/green-software-analyzer/scripts/queries_wish_list.sql) |
+| Wish Template | [`skills/green-software-analyzer/scripts/queries_wish_template.sql`](skills/green-software-analyzer/scripts/queries_wish_template.sql) |
+
+Cada arquivo oferece:
+
+1. **Totais gerais** — requisições, resposta total (KB), economia estimada (KB/MB) e percentual
+2. **Economia por parâmetro** — ordenada por impacto decrescente
+3. **Top 20 endpoints** — com parâmetros problemáticos e economia por URI
+4. **Consultas específicas do padrão** — ex.: endpoints com `limit=-1`, distribuição de `pagesize`, combinações de `fields=`, candidatos a template
+
+Como executar:
+
+```bash
+cd skills/green-software-analyzer/scripts
+sqlite3 green_software_metrics_en.db
+.read queries_green_by_default.sql
+```
+
 ## Consultas SQL de auditoria
 
 Arquivos disponíveis:
