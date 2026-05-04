@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Green Software — Análise de Logs OpenDataHub</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --green-dark:   #1a5c33;
+      --green-main:   #27ae60;
+      --green-light:  #2ecc71;
+      --green-pale:   #d5f5e3;
+      --blue-main:    #2980b9;
+      --blue-light:   #3498db;
+      --gray-bg:      #f4f6f9;
+      --gray-card:    #ffffff;
+      --gray-border:  #e0e6ed;
+      --text-dark:    #1a2332;
+      --text-mid:     #4a5568;
+      --text-light:   #718096;
+      --red-warn:     #e74c3c;
+      --orange-warn:  #e67e22;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gray-bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, var(--green-dark) 0%, #0e6655 50%, #1a5276 100%);
+      color: white;
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(46,204,113,0.08) 0%, transparent 60%);
+      animation: pulse 6s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+    .header-badge {
+      display: inline-block;
+      background: rgba(46,204,113,0.2);
+      border: 1px solid rgba(46,204,113,0.4);
+      color: #82e0aa;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+    header p {
+      font-size: 1.05rem;
+      opacity: 0.85;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+    }
+    .header-meta {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .header-meta span {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.4rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: white;
+      border-bottom: 2px solid var(--green-main);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    nav ul li a {
+      display: block;
+      padding: 1rem 1.2rem;
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.88rem;
+      font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    nav ul li a:hover, nav ul li a.active {
+      color: var(--green-dark);
+      border-bottom-color: var(--green-main);
+    }
+
+    /* ── LAYOUT ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    section {
+      margin-bottom: 3rem;
+      scroll-margin-top: 60px;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1.5rem;
+      background: var(--green-main);
+      border-radius: 2px;
+    }
+    .section-desc {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── KPI CARDS ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.4rem 1.2rem;
+      border: 1px solid var(--gray-border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--green-main);
+    }
+    .kpi-card.warn::after { background: var(--orange-warn); }
+    .kpi-card.danger::after { background: var(--red-warn); }
+    .kpi-card.blue::after { background: var(--blue-main); }
+    .kpi-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .kpi-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.1;
+    }
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.3rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .kpi-sub {
+      font-size: 0.82rem;
+      color: var(--green-main);
+      margin-top: 0.2rem;
+      font-weight: 600;
+    }
+    .kpi-sub.warn { color: var(--orange-warn); }
+    .kpi-sub.danger { color: var(--red-warn); }
+
+    /* ── CHART CARDS ── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid var(--gray-border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid var(--gray-border);
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+    }
+    .chart-container.tall { height: 380px; }
+    .chart-container.medium { height: 300px; }
+    .chart-container.short { height: 240px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.7rem; }
+    }
+
+    /* ── INSIGHT BOXES ── */
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .insight-box {
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      border-left: 4px solid;
+    }
+    .insight-box.green { background: #eafaf1; border-color: var(--green-main); }
+    .insight-box.orange { background: #fef9e7; border-color: var(--orange-warn); }
+    .insight-box.red { background: #fdedec; border-color: var(--red-warn); }
+    .insight-box.blue { background: #eaf4fb; border-color: var(--blue-main); }
+    .insight-box h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .insight-box.green h4 { color: var(--green-dark); }
+    .insight-box.orange h4 { color: #a04000; }
+    .insight-box.red h4 { color: #922b21; }
+    .insight-box.blue h4 { color: #1a5276; }
+    .insight-box p { font-size: 0.92rem; color: var(--text-mid); }
+    .insight-box strong { color: var(--text-dark); }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    th {
+      background: var(--green-dark);
+      color: white;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--gray-border);
+      color: var(--text-mid);
+    }
+    tr:hover td { background: var(--green-pale); }
+    tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-green { background: #d5f5e3; color: #1a7a4a; }
+    .badge-orange { background: #fdebd0; color: #a04000; }
+    .badge-red { background: #fadbd8; color: #922b21; }
+    .badge-blue { background: #d6eaf8; color: #1a5276; }
+
+    /* ── PROGRESS BAR ── */
+    .progress-row { margin-bottom: 0.8rem; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-mid);
+    }
+    .progress-label strong { color: var(--text-dark); }
+    .progress-bar {
+      height: 10px;
+      background: var(--gray-border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 1s ease;
+    }
+
+    /* ── RECOMMENDATION CARDS ── */
+    .rec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+    .rec-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.4rem;
+      border: 1px solid var(--gray-border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      position: relative;
+    }
+    .rec-card .rec-number {
+      position: absolute;
+      top: -12px; left: 1.2rem;
+      background: var(--green-main);
+      color: white;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+    .rec-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .rec-card p { font-size: 0.88rem; color: var(--text-mid); margin-bottom: 0.7rem; }
+    .rec-impact {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .rec-impact span {
+      font-size: 0.78rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .impact-high { background: #d5f5e3; color: #1a7a4a; }
+    .impact-med { background: #fdebd0; color: #a04000; }
+    .impact-low { background: #d6eaf8; color: #1a5276; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--green-dark);
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+      margin-top: 3rem;
+    }
+    footer strong { color: white; }
+
+    /* ── TABS ── */
+    .tab-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--gray-border);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-mid);
+      transition: all 0.2s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--green-main);
+      color: white;
+      border-color: var(--green-main);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── TOOLTIP ── */
+    .tooltip-icon {
+      display: inline-block;
+      width: 16px; height: 16px;
+      background: var(--text-light);
+      color: white;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      text-align: center;
+      line-height: 16px;
+      cursor: help;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header>
+  <div class="header-badge">🌿 Green Software Analysis</div>
+  <h1>Análise de Logs — OpenDataHub</h1>
+  <p>Padrões de uso, eficiência energética e oportunidades de redução de requests/responses entre atores</p>
+  <div class="header-meta">
+    <span>📅 <span id="meta-period">24 de Março de 2025 — 16h00 às 23h59</span></span>
+    <span>⏱ <span id="meta-duration">480</span> minutos de dados</span>
+    <span>📊 <span id="meta-total">208.171</span> requests analisadas</span>
+    <span>🖥 <span id="meta-hosts">6</span> hosts monitorados</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<nav>
+  <ul>
+    <li><a href="#visao-geral" class="active">Visão Geral</a></li>
+    <li><a href="#atores">Atores</a></li>
+    <li><a href="#temporal">Análise Temporal</a></li>
+    <li><a href="#categorias">Categorias</a></li>
+    <li><a href="#duplicatas">Duplicatas</a></li>
+    <li><a href="#cache">Potencial de Cache</a></li>
+    <li><a href="#design-patterns">Design Patterns</a></li>
+    <li><a href="#recomendacoes">Recomendações</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+<main>
+
+  <!-- ── VISÃO GERAL ── -->
+  <section id="visao-geral">
+    <div class="section-title">Visão Geral</div>
+    <p class="section-desc">Resumo executivo das métricas principais extraídas dos logs de 8 horas da plataforma OpenDataHub.</p>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">📨</div>
+        <div class="kpi-value" id="kpi-total">208.171</div>
+        <div class="kpi-label">Total de Requests</div>
+        <div class="kpi-sub" id="kpi-total-sub">~434 req/min em média</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-icon">♻️</div>
+        <div class="kpi-value" id="kpi-dup-pct">61,3%</div>
+        <div class="kpi-label">Requests Duplicadas (60s)</div>
+        <div class="kpi-sub danger" id="kpi-dup-count">127.677 requests evitáveis</div>
+      </div>
+      <div class="kpi-card warn">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-value" id="kpi-heavy-pct">7,4%</div>
+        <div class="kpi-label">Heavy Queries (limit=-1)</div>
+        <div class="kpi-sub warn" id="kpi-heavy-count">15.498 queries sem paginação</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-icon">🗂</div>
+        <div class="kpi-value" id="kpi-endpoints">5.902</div>
+        <div class="kpi-label">Endpoints Únicos</div>
+        <div class="kpi-sub" id="kpi-uris">43.909 URIs distintas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🌐</div>
+        <div class="kpi-value" id="kpi-hosts">6</div>
+        <div class="kpi-label">Hosts (Atores)</div>
+        <div class="kpi-sub">Turismo + Mobilidade</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🔄</div>
+        <div class="kpi-value" id="kpi-rps">14,5</div>
+        <div class="kpi-label">Req/segundo (média)</div>
+        <div class="kpi-sub" id="kpi-rps-peak">Pico: 108 req/s</div>
+      </div>
+      <div class="kpi-card warn">
+        <div class="kpi-icon">📄</div>
+        <div class="kpi-value" id="kpi-pag-pct">58,0%</div>
+        <div class="kpi-label">Requests com Paginação</div>
+        <div class="kpi-sub warn" id="kpi-pag-count">120.740 com pagesize/pagenumber</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🌍</div>
+        <div class="kpi-value" id="kpi-langs">9</div>
+        <div class="kpi-label">Idiomas Detectados</div>
+        <div class="kpi-sub" id="kpi-langs-sub">DE (31%) · IT (19%) · EN (6%)</div>
+      </div>
+    </div>
+
+    <!-- Insight boxes -->
+    <div class="insight-grid">
+      <div class="insight-box red">
+        <h4>🚨 Problema Crítico</h4>
+        <p>Mais de <strong>61% das requests são duplicadas</strong> em janelas de 60 segundos — requests idênticas (mesmo host + URI) sendo repetidas sem necessidade. Isso representa desperdício direto de energia e processamento.</p>
+      </div>
+      <div class="insight-box orange">
+        <h4>⚠️ Heavy Queries sem Controle</h4>
+        <p><strong>15.498 requests usam limit=-1</strong>, retornando todos os registros sem paginação. Concentradas nos hosts de mobilidade, essas queries consomem banda e CPU desproporcionalmente.</p>
+      </div>
+      <div class="insight-box green">
+        <h4>✅ Alto Potencial de Cache</h4>
+        <p>Endpoints como <strong>/v1/STA/Accommodation</strong> (44.936 requests, apenas 27 URIs únicas) têm ratio de cache de 1.664x — cada URI única é chamada em média 1.664 vezes no período.</p>
+      </div>
+      <div class="insight-box blue">
+        <h4>💡 Oportunidade de Consolidação</h4>
+        <p>Existem <strong>6 hosts distintos</strong> servindo dados sobrepostos (tourism.opendatahub.bz.it + tourism.api.opendatahub.com + tourism.opendatahub.com). Consolidação reduziria overhead de DNS e conexões.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ATORES ── -->
+  <section id="atores">
+    <div class="section-title">Distribuição por Atores (Hosts)</div>
+    <p class="section-desc">Análise do volume de requests por host, identificando os principais consumidores da infraestrutura.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Volume de Requests por Host</div>
+        <div class="chart-container tall">
+          <canvas id="hostChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Participação Percentual por Host</div>
+        <div class="chart-container tall">
+          <canvas id="hostPieChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Detalhamento por Host</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Host</th>
+              <th>Tipo</th>
+              <th>Requests</th>
+              <th>Participação</th>
+              <th>Req/min (média)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="hostsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Origins -->
+    <div class="card">
+      <div class="card-title">Origens Identificadas (Web Components)</div>
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1rem;">16 origens distintas identificadas via parâmetro <code>origin=</code> nas URIs, representando os clientes/consumidores da API.</p>
+      <div class="chart-container medium">
+        <canvas id="originsChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TEMPORAL ── -->
+  <section id="temporal">
+    <div class="section-title">Análise Temporal</div>
+    <p class="section-desc">Distribuição das requests ao longo do tempo, identificando padrões de carga e horários de pico.</p>
+
+    <div class="card">
+      <div class="card-title">Requests por Minuto (16h00 – 23h59)</div>
+      <div class="chart-container tall">
+        <canvas id="timelineChart"></canvas>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Estatísticas de Throughput</div>
+        <div style="padding:0.5rem 0;">
+          <div class="progress-row">
+            <div class="progress-label"><strong>Média</strong><span>434 req/min</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:40%;background:#27ae60"></div></div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label"><strong>Mediana</strong><span>~420 req/min</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:38%;background:#1abc9c"></div></div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label"><strong>Pico máximo</strong><span>~6.480 req/min (108/s)</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:100%;background:#e74c3c"></div></div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label"><strong>P95</strong><span>~1.500 req/min</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:65%;background:#e67e22"></div></div>
+          </div>
+        </div>
+        <div class="insight-box orange" style="margin-top:1rem;">
+          <h4>⚠️ Picos de Carga</h4>
+          <p>O pico de <strong>108 req/s</strong> é 7,4x acima da média. Isso sugere comportamento de polling agressivo por parte de alguns clientes, sem backoff exponencial.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Distribuição por Hora do Dia</div>
+        <div class="chart-container medium">
+          <canvas id="hourlyChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CATEGORIAS ── -->
+  <section id="categorias">
+    <div class="section-title">Análise por Categoria de API</div>
+    <p class="section-desc">Classificação das requests por domínio funcional, revelando quais áreas geram maior carga.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Distribuição por Categoria</div>
+        <div class="chart-container tall">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top 10 Endpoints por Volume</div>
+        <div class="chart-container tall">
+          <canvas id="topEndpointsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Distribuição por Idioma das Requests</div>
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1rem;">39,8% das requests não especificam idioma. Alemão (DE) é o idioma mais solicitado, refletindo a região do Alto Adige/Südtirol.</p>
+      <div class="chart-container medium">
+        <canvas id="languageChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DUPLICATAS ── -->
+  <section id="duplicatas">
+    <div class="section-title">Análise de Requests Duplicadas</div>
+    <p class="section-desc">Identificação de requests idênticas (mesmo host + URI) repetidas em janelas de tempo — principal oportunidade de redução de tráfego.</p>
+
+    <div class="kpi-grid" style="grid-template-columns: repeat(5, 1fr);">
+      <div class="kpi-card danger">
+        <div class="kpi-icon">⏱</div>
+        <div class="kpi-value">29,6%</div>
+        <div class="kpi-label">Duplicatas em 1s</div>
+        <div class="kpi-sub danger">61.660 requests</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-icon">⏱</div>
+        <div class="kpi-value">43,1%</div>
+        <div class="kpi-label">Duplicatas em 5s</div>
+        <div class="kpi-sub danger">89.769 requests</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-icon">⏱</div>
+        <div class="kpi-value">48,2%</div>
+        <div class="kpi-label">Duplicatas em 10s</div>
+        <div class="kpi-sub danger">100.300 requests</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-icon">⏱</div>
+        <div class="kpi-value">56,9%</div>
+        <div class="kpi-label">Duplicatas em 30s</div>
+        <div class="kpi-sub danger">118.378 requests</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-icon">⏱</div>
+        <div class="kpi-value">61,3%</div>
+        <div class="kpi-label">Duplicatas em 60s</div>
+        <div class="kpi-sub danger">127.677 requests</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Requests Duplicadas por Janela de Tempo</div>
+        <div class="chart-container tall">
+          <canvas id="duplicateChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Impacto das Duplicatas no Total</div>
+        <div class="chart-container tall">
+          <canvas id="duplicateImpactChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-box red">
+        <h4>🔴 Polling Agressivo Detectado</h4>
+        <p>29,6% das requests são idênticas a uma request anterior feita <strong>no mesmo segundo</strong>. Isso indica múltiplos clientes fazendo polling simultâneo sem coordenação ou debounce.</p>
+      </div>
+      <div class="insight-box orange">
+        <h4>🟠 Ausência de Cache no Cliente</h4>
+        <p>43,1% das requests são duplicatas em janela de 5 segundos. Nenhum mecanismo de cache client-side (ETag, Cache-Control, stale-while-revalidate) parece estar em uso.</p>
+      </div>
+      <div class="insight-box green">
+        <h4>🟢 Potencial de Economia</h4>
+        <p>Com cache de apenas <strong>60 segundos de TTL</strong>, seria possível eliminar até <strong>127.677 requests</strong> (61,3%), reduzindo proporcionalmente o consumo de CPU, banda e energia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CACHE ── -->
+  <section id="cache">
+    <div class="section-title">Potencial de Cache por Endpoint</div>
+    <p class="section-desc">Endpoints com alta frequência e baixa variação de parâmetros são candidatos ideais para caching, pois a mesma resposta pode ser reutilizada múltiplas vezes.</p>
+
+    <div class="card">
+      <div class="card-title">Top Endpoints por Ratio de Cacheabilidade (Requests / URIs Únicas)</div>
+      <div class="chart-container tall">
+        <canvas id="cacheChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Detalhamento dos Candidatos a Cache</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Total Requests</th>
+              <th>URIs Únicas</th>
+              <th>Ratio de Cache</th>
+              <th>Economia Estimada</th>
+              <th>Prioridade</th>
+            </tr>
+          </thead>
+          <tbody id="cacheTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Potencial de Redução por Estratégia Green Software</div>
+      <div class="chart-container tall">
+        <canvas id="strategyChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DESIGN PATTERNS ── -->
+  <section id="design-patterns">
+    <div class="section-title">Análise de Design Patterns Green Software</div>
+    <p class="section-desc">Avaliação do impacto potencial da implementação de 4 padrões específicos de design para eficiência energética.</p>
+
+    <div class="grid-2">
+      <!-- Green by Default -->
+      <div class="card">
+        <div class="card-title">1. Green by Default</div>
+        <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
+          Configurações padrão otimizadas para o menor consumo de recursos possível.
+        </p>
+        <div class="insight-box blue" style="margin-bottom:1rem;">
+          <p><strong>Status Atual:</strong> 15.498 queries usam <code>limit=-1</code> e 68.713 não definem paginação explícita.</p>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label"><strong>Potencial de Redução de Payload</strong><span>45%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:45%;background:#27ae60"></div></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
+          Ao forçar <code>limit=50</code> como padrão e remover <code>limit=-1</code>, eliminamos o desperdício de processar dados que o cliente muitas vezes não exibe.
+        </p>
+      </div>
+
+      <!-- Just Latest Updates -->
+      <div class="card">
+        <div class="card-title">2. Just Latest Updates (Delta)</div>
+        <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
+          Entrega apenas a diferença (delta) entre a última requisição e a atual.
+        </p>
+        <div class="insight-box orange" style="margin-bottom:1rem;">
+          <p><strong>Candidatos:</strong> 71,6% das requests (149.135) são repetições de recursos em menos de 5 min.</p>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label"><strong>Economia de Banda Estimada</strong><span>70%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:70%;background:#3498db"></div></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
+          Com intervalo médio de 22s entre polls, o uso de deltas evitaria o reenvio constante de dados estáticos (ex: nomes de hotéis, coordenadas).
+        </p>
+      </div>
+
+      <!-- Wish List -->
+      <div class="card">
+        <div class="card-title">3. Wish List (Sparse Fieldsets)</div>
+        <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
+          Permite ao cliente selecionar exatamente quais campos deseja receber.
+        </p>
+        <div class="insight-box green" style="margin-bottom:1rem;">
+          <p><strong>Uso Atual:</strong> 50,7% já usam <code>fields=</code>. 102.663 ainda recebem o objeto completo.</p>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label"><strong>Redução de Payload por Request</strong><span>60%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:60%;background:#1abc9c"></div></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
+          Campos como <code>Id</code> e <code>Title</code> são os mais pedidos. Tornar a seleção obrigatória reduz o custo de serialização JSON.
+        </p>
+      </div>
+
+      <!-- Wish Template -->
+      <div class="card">
+        <div class="card-title">4. Wish Template</div>
+        <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
+          Templates pré-definidos para casos de uso comuns (ex: 'summary', 'map').
+        </p>
+        <div class="insight-box blue" style="margin-bottom:1rem;">
+          <p><strong>Beneficiários:</strong> 20 endpoints principais concentram 90% da carga de serialização.</p>
+        </div>
+        <div class="progress-row">
+          <div class="progress-label"><strong>Redução de CPU no Servidor</strong><span>25%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:25%;background:#9b59b6"></div></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.8rem;">
+          Templates evitam o parsing repetitivo de strings de campos e permitem otimizações de cache no nível da projeção do banco de dados.
+        </p>
+      </div>
+    </div>
+
+    <!-- Métricas reais do simulador -->
+    <div class="card" style="margin-top:0;">
+      <div class="card-title">Métricas Reais — Traffic Simulator</div>
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:1.2rem;">
+        Dados coletados via simulação HTTP real (<span id="sim-total">—</span> URIs únicas simuladas):
+        tamanho médio de payload e latência por design pattern e por host.
+      </p>
+      <div class="grid-2">
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Distribuição por Pattern</div>
+          <table>
+            <thead>
+              <tr><th>Pattern</th><th>Requests</th><th>%</th><th>Avg KB</th><th>Avg Latência</th></tr>
+            </thead>
+            <tbody id="simPatternTable"></tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Tamanho Médio de Resposta por Host (KB)</div>
+          <div class="chart-container medium">
+            <canvas id="simHostSizeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCI Analysis -->
+    <div class="card">
+      <div class="card-title">SCI — Software Carbon Intensity (Green Software Foundation)</div>
+
+      <div class="insight-box blue" style="margin-bottom:1.2rem;">
+        <h4>📐 Fórmula SCI (GSF Specification v1)</h4>
+        <p style="font-family:monospace;font-size:0.95rem;margin:0.4rem 0;">
+          <strong id="sci-formula">SCI = ((E_net + E_compute) &times; I + M) / R</strong>
+        </p>
+        <p style="font-size:0.83rem;margin-top:0.5rem;">
+          <strong>E_net</strong> = bytes transferidos &times; 0,001 kWh/GB &nbsp;·&nbsp;
+          <strong>E_compute</strong> = 100 W &times; latência &nbsp;·&nbsp;
+          <strong>I</strong> = <span id="sci-intensity">233</span> gCO₂eq/kWh (Itália 2023, Ember Climate) &nbsp;·&nbsp;
+          <strong>M</strong> = 0,000013 gCO₂eq/req (hardware amortizado) &nbsp;·&nbsp;
+          <strong>R</strong> = 1 request (unidade funcional)
+        </p>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:1.5rem;">
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">SCI Atual vs. Após Aplicar Pattern</div>
+          <div class="chart-container tall">
+            <canvas id="sciCompareChart"></canvas>
+          </div>
+        </div>
+        <div>
+          <div class="card-title" style="font-size:0.9rem;margin-bottom:0.8rem;">Detalhamento por Pattern</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Avg KB</th>
+                  <th>Lat.</th>
+                  <th>Rede/CPU</th>
+                  <th>SCI atual<br><small>(mgCO₂/req)</small></th>
+                  <th>SCI otim.<br><small>(mgCO₂/req)</small></th>
+                  <th>Redução</th>
+                  <th>CO₂ salvo<br><small>(gCO₂eq)</small></th>
+                </tr>
+              </thead>
+              <tbody id="sciPatternTable"></tbody>
+            </table>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-light);margin-top:0.8rem;">
+            CO₂ salvo = economia por request &times; nº de requests simuladas.
+            Intensidade carbono: Itália 2023 (Ember Climate).
+          </p>
+        </div>
+      </div>
+
+      <!-- Wish Template detail -->
+      <div class="card-title" style="font-size:0.95rem;margin-bottom:0.5rem;">
+        Wish Template — Campos por Chamada e SCI por Template
+      </div>
+      <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:1rem;">
+        Os templates abaixo foram identificados automaticamente a partir dos padrões de uso do parâmetro
+        <code>fields=</code>. Cada template define um conjunto mínimo de campos para um caso de uso
+        específico, eliminando serialização desnecessária no servidor.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Template</th>
+              <th>Campos incluídos</th>
+              <th>Tam. estimado</th>
+              <th>SCI (mgCO₂/req)</th>
+              <th>Requests/período</th>
+              <th>Caso de uso</th>
+            </tr>
+          </thead>
+          <tbody id="wishTemplateTable"></tbody>
+        </table>
+      </div>
+      <div class="insight-box green" style="margin-top:1rem;">
+        <h4>✅ Conclusão Wish Template</h4>
+        <p id="sci-wt-conclusion">
+          Substituir respostas completas por templates pré-definidos reduz o SCI em aproximadamente
+          <strong id="sci-wt-reduction">50%</strong> — de
+          <strong id="sci-wt-baseline">1,53</strong> para
+          <strong id="sci-wt-optimized">0,77</strong> mgCO₂eq por request.
+          O ganho vem principalmente da redução de tempo de processamento no servidor
+          (projeção e serialização), não apenas do tamanho do payload.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="background: var(--green-dark); color: white; border: none;">
+      <div class="card-title" style="color: white; border-bottom-color: rgba(255,255,255,0.2);">Impacto Combinado dos Patterns</div>
+      <div class="grid-3" style="text-align: center;">
+        <div>
+          <div style="font-size: 2.5rem; font-weight: 800;">55%</div>
+          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Redução de Energia</div>
+        </div>
+        <div>
+          <div style="font-size: 2.5rem; font-weight: 800;">52%</div>
+          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Pegada de Carbono</div>
+        </div>
+        <div>
+          <div style="font-size: 2.5rem; font-weight: 800;">~1.2M</div>
+          <div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase;">Requests/Semana Evitadas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RECOMENDAÇÕES ── -->
+  <section id="recomendacoes">
+    <div class="section-title">Recomendações Green Software</div>
+    <p class="section-desc">Estratégias priorizadas para reduzir o impacto ambiental da plataforma, baseadas nos padrões identificados nos logs.</p>
+
+    <div class="rec-grid">
+      <div class="rec-card">
+        <div class="rec-number">1</div>
+        <h4>Implementar Cache HTTP com TTL Adequado</h4>
+        <p>Adicionar headers <code>Cache-Control: max-age=60</code> e suporte a <code>ETag</code> / <code>Last-Modified</code> nos endpoints de alta repetição. Endpoints como <strong>/v1/STA/Accommodation</strong> (ratio 1664x) e <strong>/v1/STA/ODHActivityPoi</strong> (ratio 1365x) devem ser priorizados.</p>
+        <div class="rec-impact">
+          <span class="impact-high">Redução: até 61,3%</span>
+          <span class="impact-high">Impacto: Crítico</span>
+          <span class="impact-med">Esforço: Médio</span>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-number">2</div>
+        <h4>Eliminar ou Controlar Queries com limit=-1</h4>
+        <p>As <strong>15.498 queries com limit=-1</strong> (7,4% do total) retornam todos os registros sem paginação, concentradas nos hosts de mobilidade. Implementar paginação obrigatória ou limites máximos (ex: limit=1000) reduz drasticamente o payload de resposta.</p>
+        <div class="rec-impact">
+          <span class="impact-high">Redução de banda: ~40%</span>
+          <span class="impact-high">Impacto: Alto</span>
+          <span class="impact-low">Esforço: Baixo</span>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-number">3</div>
+        <h4>Implementar Debounce e Rate Limiting nos Clientes</h4>
+        <p>29,6% das requests são duplicatas no mesmo segundo. Implementar debounce de 1-5 segundos nos web components e rate limiting por IP/origem eliminaria o polling agressivo sem impactar a experiência do usuário.</p>
+        <div class="rec-impact">
+          <span class="impact-high">Redução: 29-43%</span>
+          <span class="impact-high">Impacto: Alto</span>
+          <span class="impact-med">Esforço: Médio</span>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-number">4</div>
+        <h4>Consolidar Hosts Legados</h4>
+        <p>Existem 4 hosts legados (<code>*.bz.it</code> e <code>tourism.opendatahub.com</code>) que somam 34% do tráfego. Migrar para os hosts atuais (<code>*.api.opendatahub.com</code>) e desativar os legados reduz overhead de DNS, certificados TLS e manutenção de infraestrutura.</p>
+        <div class="rec-impact">
+          <span class="impact-med">Redução infra: ~34%</span>
+          <span class="impact-med">Impacto: Médio</span>
+          <span class="impact-med">Esforço: Médio</span>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-number">5</div>
+        <h4>Implementar Seleção de Campos (Sparse Fieldsets)</h4>
+        <p>Muitas requests usam o parâmetro <code>fields=</code> para selecionar apenas alguns campos, mas a maioria não o usa. Incentivar o uso de <code>fields=</code> e implementar projeção no servidor reduz o tamanho das respostas e o processamento de serialização.</p>
+        <div class="rec-impact">
+          <span class="impact-med">Redução payload: 30-70%</span>
+          <span class="impact-med">Impacto: Médio</span>
+          <span class="impact-low">Esforço: Baixo</span>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-number">6</div>
+        <h4>Cache por Idioma com Vary Header</h4>
+        <p>60,2% das requests especificam idioma (DE, IT, EN). Implementar cache com <code>Vary: Accept-Language</code> ou incluir idioma na chave de cache permite reutilizar respostas por idioma, reduzindo processamento de tradução/filtragem no servidor.</p>
+        <div class="rec-impact">
+          <span class="impact-med">Redução CPU: ~25%</span>
+          <span class="impact-low">Impacto: Moderado</span>
+          <span class="impact-low">Esforço: Baixo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumo de impacto estimado -->
+    <div class="card" style="margin-top:2rem;">
+      <div class="card-title">Estimativa de Impacto Combinado das Recomendações</div>
+      <div class="grid-2">
+        <div>
+          <p style="font-size:0.9rem;color:var(--text-mid);margin-bottom:1.2rem;">
+            Aplicando as recomendações em conjunto (com sobreposições consideradas), estima-se a seguinte redução no volume de requests e consumo de recursos:
+          </p>
+          <div class="progress-row">
+            <div class="progress-label"><strong>Redução de Requests (cache 60s)</strong><span>61,3%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:61.3%;background:#e74c3c"></div></div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label"><strong>Redução de Banda (sem limit=-1)</strong><span>~40%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:40%;background:#e67e22"></div></div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label"><strong>Redução de CPU (cache + fields)</strong><span>~55%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:55%;background:#27ae60"></div></div>
+          </div>
+          <div class="progress-row">
+            <div class="progress-label"><strong>Redução de Infra (consolidação hosts)</strong><span>~34%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:34%;background:#3498db"></div></div>
+          </div>
+        </div>
+        <div class="insight-box green" style="align-self:start;">
+          <h4>🌿 Impacto Green Software</h4>
+          <p>
+            Em 8 horas, <strong>127.677 requests poderiam ser eliminadas</strong> apenas com cache de 60s. 
+            Extrapolando para 24h, isso representa aproximadamente <strong>383.000 requests/dia evitáveis</strong> — 
+            reduzindo proporcionalmente o consumo de energia dos servidores, refrigeração e infraestrutura de rede, 
+            alinhando a plataforma com os princípios de <strong>Green Software Foundation</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <p><strong>Green Software Analysis — OpenDataHub</strong></p>
+  <p style="margin-top:0.5rem;">Análise baseada em 208.171 registros de log do período 16h00–23h59 de 24/03/2025 ·</p>
+</footer>
+
+<!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
+<script>
+// ── Dados carregados dinamicamente de dashboard_data.json ─────────────────────
+
+// ── Paleta de cores ───────────────────────────────────────────────────────────
+const GREENS = ['#1a5c33','#27ae60','#2ecc71','#1abc9c','#16a085','#0e6655','#3d9970','#52be80','#82e0aa','#a9dfbf'];
+const BLUES  = ['#1a5276','#2980b9','#3498db','#5dade2','#85c1e9'];
+const MIXED  = ['#27ae60','#3498db','#e67e22','#9b59b6','#e74c3c','#1abc9c','#f39c12','#2ecc71','#2980b9','#8e44ad'];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function shortEndpoint(ep) {
+  const parts = ep.split('/');
+  return parts.slice(-2).join('/').substring(0, 35);
+}
+
+// ── Carrega todos os dados e inicializa o dashboard ───────────────────────────
+fetch('dashboard_data.json')
+  .then(r => r.json())
+  .then(data => {
+
+// ── Atualiza DOM: header, KPIs e tabela de hosts ──────────────────────────────
+(function updateDOM() {
+  const m   = data.meta;
+  const fmt = n => Number(n).toLocaleString('pt-BR');
+  const pct = (n, d=1) => n.toFixed(d).replace('.', ',') + '%';
+
+  document.getElementById('meta-period').textContent   = m.period_label;
+  document.getElementById('meta-duration').textContent  = fmt(m.duration_minutes);
+  document.getElementById('meta-total').textContent     = fmt(m.total_requests);
+  document.getElementById('meta-hosts').textContent     = m.unique_hosts;
+
+  document.getElementById('kpi-total').textContent      = fmt(m.total_requests);
+  document.getElementById('kpi-total-sub').textContent  = `~${fmt(m.avg_rpm)} req/min em média`;
+  document.getElementById('kpi-dup-pct').textContent    = pct(m.duplicate_60s_pct);
+  document.getElementById('kpi-dup-count').textContent  = `${fmt(m.duplicate_60s_count)} requests evitáveis`;
+  document.getElementById('kpi-heavy-pct').textContent  = pct(m.heavy_queries_pct);
+  document.getElementById('kpi-heavy-count').textContent= `${fmt(m.heavy_queries_count)} queries sem paginação`;
+  document.getElementById('kpi-endpoints').textContent  = fmt(m.unique_endpoints);
+  document.getElementById('kpi-uris').textContent       = `${fmt(m.unique_uris)} URIs distintas`;
+  document.getElementById('kpi-hosts').textContent      = m.unique_hosts;
+  document.getElementById('kpi-rps').textContent        = String(m.avg_rps).replace('.', ',');
+  document.getElementById('kpi-rps-peak').textContent   = `Pico: ${fmt(m.peak_rps)} req/s`;
+  document.getElementById('kpi-pag-pct').textContent    = pct(m.pagination_pct);
+  document.getElementById('kpi-pag-count').textContent  = `${fmt(m.pagination_count)} com pagesize/pagenumber`;
+  document.getElementById('kpi-langs').textContent      = m.unique_languages;
+  const topLangs = data.languages.filter(l => !l.language.includes('especificado')).slice(0, 3);
+  if (topLangs.length >= 3) {
+    document.getElementById('kpi-langs-sub').textContent =
+      topLangs.map(l => `${l.language.split(' ')[0]} (${l.pct}%)`).join(' · ');
+  }
+})();
+
+// ── Tabela de hosts ───────────────────────────────────────────────────────────
+(function buildHostTable() {
+  const colors = ['#27ae60','#1abc9c','#3498db','#16a085','#2980b9','#82e0aa'];
+  const tbody = document.getElementById('hostsTableBody');
+  data.hosts.forEach((h, i) => {
+    const typeClass   = h.type === 'Mobilidade' ? 'badge-blue'   : 'badge-green';
+    const statusClass = h.status === 'Atual'    ? 'badge-green'  : 'badge-orange';
+    const color = colors[i % colors.length];
+    tbody.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${h.host}</strong></td>
+        <td><span class="badge ${typeClass}">${h.type}</span></td>
+        <td>${Number(h.requests).toLocaleString('pt-BR')}</td>
+        <td>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${h.pct}%;background:${color}"></div>
+          </div>
+          ${h.pct.toFixed(2).replace('.', ',')}%
+        </td>
+        <td>${h.rpm.toLocaleString('pt-BR')}</td>
+        <td><span class="badge ${statusClass}">${h.status}</span></td>
+      </tr>`;
+  });
+})();
+
+// ── Chart 1: Host Bar ─────────────────────────────────────────────────────────
+new Chart(document.getElementById('hostChart'), {
+  type: 'bar',
+  data: {
+    labels: data.hosts.map(h => h.host.replace('tourism.','T.').replace('mobility.','M.').replace('.opendatahub','.ODH')),
+    datasets: [{
+      label: 'Requests',
+      data: data.hosts.map(h => h.requests),
+      backgroundColor: GREENS,
+      borderRadius: 6,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} requests (${data.hosts[ctx.dataIndex].pct}%)`
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR') } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ── Chart 2: Host Pie ─────────────────────────────────────────────────────────
+new Chart(document.getElementById('hostPieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: data.hosts.map(h => h.host.replace('tourism.','T.').replace('mobility.','M.')),
+    datasets: [{
+      data: data.hosts.map(h => h.requests),
+      backgroundColor: GREENS,
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${data.hosts[ctx.dataIndex].pct}%)`
+        }
+      }
+    },
+    cutout: '55%'
+  }
+});
+
+// ── Chart 3: Origins ──────────────────────────────────────────────────────────
+new Chart(document.getElementById('originsChart'), {
+  type: 'bar',
+  data: {
+    labels: data.origins.map(o => o.origin.replace('webcomp-','')),
+    datasets: [{
+      label: 'Requests com origin=',
+      data: data.origins.map(o => o.count),
+      backgroundColor: BLUES,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 30 } },
+      y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR') } }
+    }
+  }
+});
+
+// ── Chart 4: Timeline (requests_per_minute do JSON) ───────────────────────────
+(function buildTimeline() {
+  const rpm    = data.requests_per_minute;
+  const vals   = rpm.map(r => r.requests);
+  const labels = rpm.map(r => r.minute_bin_str);
+  const ctx    = document.getElementById('timelineChart').getContext('2d');
+  const grad   = ctx.createLinearGradient(0, 0, 0, 350);
+  grad.addColorStop(0, 'rgba(39,174,96,0.4)');
+  grad.addColorStop(1, 'rgba(39,174,96,0.02)');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Requests/min',
+        data: vals,
+        borderColor: '#1a7a4a',
+        backgroundColor: grad,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => ` ${c.raw} req/min` } }
+      },
+      scales: {
+        x: { grid: { color: '#f5f5f5' }, ticks: { maxTicksLimit: 16, font: { size: 10 } } },
+        y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR') } }
+      }
+    }
+  });
+})();
+
+// ── Chart 5: Hourly ───────────────────────────────────────────────────────────
+const maxHourReq = Math.max(...data.hourly.map(h => h.requests));
+new Chart(document.getElementById('hourlyChart'), {
+  type: 'bar',
+  data: {
+    labels: data.hourly.map(h => `${h.hour}h`),
+    datasets: [{
+      label: 'Requests',
+      data: data.hourly.map(h => h.requests),
+      backgroundColor: data.hourly.map(h => h.requests === maxHourReq ? '#e74c3c' : '#27ae60'),
+      borderRadius: 5
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR') } }
+    }
+  }
+});
+
+// ── Chart 6: Category ─────────────────────────────────────────────────────────
+new Chart(document.getElementById('categoryChart'), {
+  type: 'doughnut',
+  data: {
+    labels: data.categories.map(c => c.category),
+    datasets: [{
+      data: data.categories.map(c => c.count),
+      backgroundColor: MIXED,
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { font: { size: 11 }, padding: 10 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${data.categories[ctx.dataIndex].pct}%)`
+        }
+      }
+    },
+    cutout: '50%'
+  }
+});
+
+// ── Chart 7: Top Endpoints ────────────────────────────────────────────────────
+new Chart(document.getElementById('topEndpointsChart'), {
+  type: 'bar',
+  data: {
+    labels: data.topEndpoints.map(e => shortEndpoint(e.endpoint)),
+    datasets: [{
+      label: 'Requests',
+      data: data.topEndpoints.map(e => e.count),
+      backgroundColor: GREENS,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: ctx => data.topEndpoints[ctx[0].dataIndex].endpoint,
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} req (${data.topEndpoints[ctx.dataIndex].pct}%)`
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR'), font:{size:10} } },
+      y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// ── Chart 8: Duplicate Windows ────────────────────────────────────────────────
+const dupKeys   = ['1s', '5s', '10s', '30s', '60s'];
+const dupValues = dupKeys.map(k => data.duplicateWindows[k] || 0);
+const dupPcts   = dupKeys.map(k => data.duplicateWindowPcts[k] || 0);
+new Chart(document.getElementById('duplicateChart'), {
+  type: 'bar',
+  data: {
+    labels: dupKeys,
+    datasets: [{
+      label: 'Requests Duplicadas',
+      data: dupValues,
+      backgroundColor: ['#82e0aa','#52be80','#27ae60','#1e8449','#1a5c33'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} requests (${dupPcts[ctx.dataIndex]}%)`
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: {
+        grid: { color: '#f0f0f0' },
+        ticks: { callback: v => v.toLocaleString('pt-BR') }
+      }
+    }
+  }
+});
+
+// ── Chart 9: Duplicate Impact ─────────────────────────────────────────────────
+const dup60count  = data.meta.duplicate_60s_count;
+const totalReqs   = data.meta.total_requests;
+new Chart(document.getElementById('duplicateImpactChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Requests Únicas (60s)', 'Duplicatas Evitáveis (60s)'],
+    datasets: [{
+      data: [totalReqs - dup60count, dup60count],
+      backgroundColor: ['#27ae60', '#e74c3c'],
+      borderWidth: 3,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 15 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} (${(ctx.raw / totalReqs * 100).toFixed(1)}%)`
+        }
+      }
+    },
+    cutout: '60%'
+  }
+});
+
+// ── Chart 10: Cache Candidates ────────────────────────────────────────────────
+new Chart(document.getElementById('cacheChart'), {
+  type: 'bar',
+  data: {
+    labels: data.cacheCandidates.map(c => shortEndpoint(c.endpoint)),
+    datasets: [{
+      label: 'Ratio de Cache (req / URI única)',
+      data: data.cacheCandidates.map(c => c.cache_ratio),
+      backgroundColor: GREENS,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: ctx => data.cacheCandidates[ctx[0].dataIndex].endpoint,
+          label: ctx => [
+            ` Ratio: ${ctx.raw.toLocaleString('pt-BR')}x`,
+            ` Total: ${data.cacheCandidates[ctx.dataIndex].total_requests.toLocaleString('pt-BR')} req`,
+            ` URIs únicas: ${data.cacheCandidates[ctx.dataIndex].unique_uris}`
+          ]
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR')+'x' } },
+      y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// ── Cache Table ───────────────────────────────────────────────────────────────
+const tbody = document.getElementById('cacheTableBody');
+data.cacheCandidates.forEach((c, i) => {
+  const savings = Math.round(c.total_requests * (1 - 1/c.cache_ratio));
+  const priority = c.cache_ratio > 1000 ? 'badge-red' : c.cache_ratio > 500 ? 'badge-orange' : 'badge-blue';
+  const priorityLabel = c.cache_ratio > 1000 ? 'Crítica' : c.cache_ratio > 500 ? 'Alta' : 'Média';
+  tbody.innerHTML += `
+    <tr>
+      <td><code style="font-size:0.82rem;">${c.endpoint}</code></td>
+      <td>${c.total_requests.toLocaleString('pt-BR')}</td>
+      <td>${c.unique_uris}</td>
+      <td><strong>${c.cache_ratio.toLocaleString('pt-BR')}x</strong></td>
+      <td>${savings.toLocaleString('pt-BR')} req/8h</td>
+      <td><span class="badge ${priority}">${priorityLabel}</span></td>
+    </tr>`;
+});
+
+// ── Simulação: tabela de patterns e gráfico de hosts ─────────────────────────
+(function buildSimulation() {
+  const sim = data.simulation;
+  if (!sim) return;
+
+  document.getElementById('sim-total').textContent =
+    sim.total_simulated.toLocaleString('pt-BR');
+
+  // Tabela de patterns
+  const ptbody = document.getElementById('simPatternTable');
+  const patColors = {'Green by Default':'#27ae60','Just Latest Updates':'#3498db',
+                     'Wish List':'#1abc9c','Wish Template':'#9b59b6'};
+  sim.patterns.forEach(p => {
+    const colorKey = Object.keys(patColors).find(k => p.pattern.startsWith(k)) || '';
+    const dot = colorKey
+      ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;
+                      background:${patColors[colorKey]};margin-right:6px;"></span>`
+      : '';
+    ptbody.innerHTML += `
+      <tr>
+        <td style="white-space:nowrap;">${dot}${p.pattern}</td>
+        <td>${p.count.toLocaleString('pt-BR')}</td>
+        <td>${p.pct}%</td>
+        <td>${p.avg_size_kb} KB</td>
+        <td>${p.avg_latency_s}s</td>
+      </tr>`;
+  });
+
+  // Gráfico: avg KB por host
+  new Chart(document.getElementById('simHostSizeChart'), {
+    type: 'bar',
+    data: {
+      labels: sim.host_metrics.map(h => h.host.replace('tourism.','T.').replace('mobility.','M.').replace('.opendatahub','.ODH')),
+      datasets: [{
+        label: 'Tamanho médio (KB)',
+        data: sim.host_metrics.map(h => h.avg_size_kb),
+        backgroundColor: GREENS,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: ctx => sim.host_metrics[ctx[0].dataIndex].host,
+            label: ctx => [
+              ` Avg: ${ctx.raw} KB`,
+              ` Latência: ${sim.host_metrics[ctx.dataIndex].avg_latency_s}s`,
+              ` Requests: ${sim.host_metrics[ctx.dataIndex].count.toLocaleString('pt-BR')}`
+            ]
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v + ' KB' } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+})();
+
+// ── Chart 11: Strategy ────────────────────────────────────────────────────────
+const w = data.duplicateWindowPcts;
+new Chart(document.getElementById('strategyChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Cache 60s TTL','Cache 30s TTL','Cache 10s TTL','Cache 5s TTL','Debounce 5s','Remoção limit=-1','Consolidação Hosts'],
+    datasets: [{
+      label: '% de Requests Reduzidas',
+      data: [
+        w['60s'] || 0,
+        w['30s'] || 0,
+        w['10s'] || 0,
+        w['5s']  || 0,
+        w['5s']  || 0,
+        data.meta.heavy_queries_pct || 0,
+        34.0
+      ],
+      backgroundColor: ['#1a5c33','#1e8449','#27ae60','#52be80','#3498db','#9b59b6','#e67e22'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw}% de redução estimada`
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: '#f0f0f0' },
+        ticks: { callback: v => v + '%' },
+        max: 75
+      },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+// ── Language Chart ────────────────────────────────────────────────────────────
+new Chart(document.getElementById('languageChart'), {
+  type: 'bar',
+  data: {
+    labels: data.languages.map(l => l.language),
+    datasets: [{
+      label: 'Requests',
+      data: data.languages.map(l => l.count),
+      backgroundColor: [...GREENS.slice(0,4), ...BLUES.slice(0,3)],
+      borderRadius: 5
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw.toLocaleString('pt-BR')} req (${data.languages[ctx.dataIndex].pct}%)`
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: '#f0f0f0' }, ticks: { callback: v => v.toLocaleString('pt-BR') } }
+    }
+  }
+});
+
+// ── SCI: gráfico comparativo e tabelas ───────────────────────────────────────
+(function buildSCI() {
+  const sci = data.sci;
+  if (!sci) return;
+
+  // Update formula constants in DOM
+  document.getElementById('sci-formula').textContent =
+    sci.constants.formula;
+  document.getElementById('sci-intensity').textContent =
+    sci.constants.carbon_intensity_gco2_kwh;
+
+  // Grouped bar chart: baseline vs optimized
+  const patterns = sci.patterns;
+  new Chart(document.getElementById('sciCompareChart'), {
+    type: 'bar',
+    data: {
+      labels: patterns.map(p => p.pattern.replace(' (Sparse Fieldsets)', '').replace(' (Delta)', '')),
+      datasets: [
+        {
+          label: 'SCI Atual (mgCO₂/req)',
+          data: patterns.map(p => p.sci_baseline_mg),
+          backgroundColor: '#e74c3c',
+          borderRadius: 4
+        },
+        {
+          label: 'SCI c/ Pattern (mgCO₂/req)',
+          data: patterns.map(p => p.sci_optimized_mg),
+          backgroundColor: '#27ae60',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            afterLabel: ctx => {
+              const p = patterns[ctx.dataIndex];
+              return ctx.datasetIndex === 0
+                ? ` Payload: ${p.avg_size_kb} KB | Lat: ${p.avg_latency_s}s`
+                : ` Payload: ${p.opt_size_kb} KB | Lat: ${p.opt_latency_s}s`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+        y: {
+          grid: { color: '#f0f0f0' },
+          ticks: { callback: v => v.toFixed(2) + ' mg' },
+          title: { display: true, text: 'mgCO₂eq / request', font: { size: 10 } }
+        }
+      }
+    }
+  });
+
+  // SCI table per pattern
+  const sciTbody = document.getElementById('sciPatternTable');
+  patterns.forEach(p => {
+    const shortName = p.pattern.replace(' (Sparse Fieldsets)', '').replace(' (Delta)', '');
+    sciTbody.innerHTML += `
+      <tr>
+        <td style="white-space:nowrap;font-size:0.82rem;">${shortName}</td>
+        <td>${p.avg_size_kb} KB</td>
+        <td>${p.avg_latency_s}s</td>
+        <td style="font-size:0.78rem;">${p.e_network_pct}% / ${p.e_compute_pct}%</td>
+        <td><strong>${p.sci_baseline_mg}</strong></td>
+        <td><strong style="color:#27ae60;">${p.sci_optimized_mg}</strong></td>
+        <td><span class="badge badge-green">&minus;${p.reduction_pct}%</span></td>
+        <td>${p.savings_g_total}</td>
+      </tr>`;
+  });
+
+  // Wish Template table
+  const wtTbody = document.getElementById('wishTemplateTable');
+  const baseline = patterns.find(p => p.pattern.startsWith('Wish Template'));
+  sci.wish_templates.forEach(t => {
+    const isBaseline = t.name === 'detail_full';
+    const rowStyle = isBaseline ? 'background:#fff5f5;' : '';
+    wtTbody.innerHTML += `
+      <tr style="${rowStyle}">
+        <td><code>${t.name}</code>${isBaseline ? ' <span class="badge badge-orange">atual</span>' : ''}</td>
+        <td style="font-size:0.82rem;">${t.fields.join(', ')}</td>
+        <td>${t.est_size_kb} KB</td>
+        <td><strong style="color:${isBaseline ? '#e74c3c' : '#27ae60'};">${t.sci_mg} mgCO₂</strong></td>
+        <td>${t.requests ? Number(t.requests).toLocaleString('pt-BR') : '—'}</td>
+        <td style="font-size:0.82rem;">${t.use_case}</td>
+      </tr>`;
+  });
+
+  // Update conclusion text
+  if (baseline) {
+    document.getElementById('sci-wt-reduction').textContent =
+      baseline.reduction_pct.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('sci-wt-baseline').textContent =
+      String(baseline.sci_baseline_mg).replace('.', ',');
+    document.getElementById('sci-wt-optimized').textContent =
+      String(baseline.sci_optimized_mg).replace('.', ',');
+  }
+})();
+
+// ── Fecha o bloco fetch ───────────────────────────────────────────────────────
+}).catch(err => console.error('Erro ao carregar dashboard_data.json:', err));
+
+// ── Nav active on scroll ──────────────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>

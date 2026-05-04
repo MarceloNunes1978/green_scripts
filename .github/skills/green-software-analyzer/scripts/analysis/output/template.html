@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Template - Resultado da Análise de Logs</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+            color: #14532d;
+        }
+        .subtitle {
+            margin-bottom: 20px;
+            color: #4b5563;
+        }
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .card-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+        .card-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111827;
+        }
+        section {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        h2 {
+            font-size: 1.05rem;
+            color: #14532d;
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Template de Resultados da Análise</h1>
+        <p class="subtitle">Arquivo gerado automaticamente a partir de analysis_results.json.</p>
+
+        <div class="kpis">
+            <div class="card">
+                <div class="card-label">Total de Requests</div>
+                <div class="card-value">1.095.284</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Hosts Únicos</div>
+                <div class="card-value">6</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Endpoints Únicos</div>
+                <div class="card-value">26.035</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Requests com Parâmetros</div>
+                <div class="card-value">1.023.677</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Duplicatas em 60s</div>
+                <div class="card-value">46,69%</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Heavy Queries (limit=-1)</div>
+                <div class="card-value">60.373</div>
+            </div>
+        </div>
+
+        <section>
+            <h2>Top Hosts</h2>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Host</th><th>Requests</th><th>Participação</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>tourism.opendatahub.bz.it</td><td>472.971</td><td>43,18%</td></tr>
+<tr><td>2</td><td>mobility.api.opendatahub.com</td><td>380.272</td><td>34,72%</td></tr>
+<tr><td>3</td><td>tourism.api.opendatahub.com</td><td>179.988</td><td>16,43%</td></tr>
+<tr><td>4</td><td>tourism.opendatahub.com</td><td>38.895</td><td>3,55%</td></tr>
+<tr><td>5</td><td>mobility.api.opendatahub.bz.it</td><td>19.392</td><td>1,77%</td></tr>
+<tr><td>6</td><td>tourism.api.opendatahub.bz.it</td><td>3.766</td><td>0,34%</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Top Endpoints</h2>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Endpoint</th><th>Requests</th><th>Participação</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>/v1/STA/ODHActivityPoi</td><td>165.002</td><td>15,06%</td></tr>
+<tr><td>2</td><td>/v1/STA/Accommodation</td><td>164.686</td><td>15,04%</td></tr>
+<tr><td>3</td><td>/v1/EventShort/GetbyRoomBooked</td><td>99.271</td><td>9,06%</td></tr>
+<tr><td>4</td><td>/v2/flat,node/EChargingPlug/echarging-plug-status-ocpi/latest</td><td>35.431</td><td>3,23%</td></tr>
+<tr><td>5</td><td>/api/STA/Accommodation</td><td>29.950</td><td>2,73%</td></tr>
+<tr><td>6</td><td>/api/STA/ODHActivityPoi</td><td>29.927</td><td>2,73%</td></tr>
+<tr><td>7</td><td>/api/Event</td><td>25.503</td><td>2,33%</td></tr>
+<tr><td>8</td><td>/v1/ODHActivityPoi</td><td>19.099</td><td>1,74%</td></tr>
+<tr><td>9</td><td>/v1/Accommodation</td><td>16.873</td><td>1,54%</td></tr>
+<tr><td>10</td><td>/v1/Weather</td><td>13.590</td><td>1,24%</td></tr>
+<tr><td>11</td><td>/v1/AccommodationRoom</td><td>8.722</td><td>0,80%</td></tr>
+<tr><td>12</td><td>/v1/Weather/District</td><td>7.775</td><td>0,71%</td></tr>
+<tr><td>13</td><td>/v2/flat,node/ParkingStation/occupied/latest</td><td>7.191</td><td>0,66%</td></tr>
+<tr><td>14</td><td>/v1/AccommodationAvailable</td><td>6.743</td><td>0,62%</td></tr>
+<tr><td>15</td><td>/v1/ODHTag/ski%20alpin</td><td>6.471</td><td>0,59%</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Categorias</h2>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Categoria</th><th>Requests</th><th>Participação</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Other</td><td>327.724</td><td>29,92%</td></tr>
+<tr><td>2</td><td>Activity/POI</td><td>256.929</td><td>23,46%</td></tr>
+<tr><td>3</td><td>Accommodation</td><td>235.055</td><td>21,46%</td></tr>
+<tr><td>4</td><td>Events</td><td>138.484</td><td>12,64%</td></tr>
+<tr><td>5</td><td>ECharging</td><td>46.153</td><td>4,21%</td></tr>
+<tr><td>6</td><td>Weather</td><td>44.045</td><td>4,02%</td></tr>
+<tr><td>7</td><td>Mobility</td><td>32.034</td><td>2,92%</td></tr>
+<tr><td>8</td><td>Ski</td><td>7.828</td><td>0,71%</td></tr>
+<tr><td>9</td><td>Metadata</td><td>4.351</td><td>0,40%</td></tr>
+<tr><td>10</td><td>Gastronomy</td><td>2.627</td><td>0,24%</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

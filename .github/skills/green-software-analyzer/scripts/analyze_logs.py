@@ -314,7 +314,7 @@ def generate_template_html(data, output_path):
         .kpis {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;  
+            gap: 12px;
             margin-bottom: 24px;
         }}
         .card {{

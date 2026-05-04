@@ -6,7 +6,7 @@ import os
 
 # Configurations
 DB_NAME = 'green_software_metrics_en.db'
-OUTPUT_DIR = './analysis/output/delta_analysis_en'
+OUTPUT_DIR = '/analysis/output/delta_analysis_en'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def analyze_delta():

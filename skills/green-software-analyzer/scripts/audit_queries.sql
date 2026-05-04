@@ -189,3 +189,31 @@ LEFT JOIN api_request_parameters p
   ON p.api_metric_id = fm.id
 ORDER BY fm.id DESC, p.id ASC
 LIMIT COALESCE(:limit_rows, 1000);
+
+-- ============================================================
+-- 8) Full join: api_requests_original + api_metric_original_links + api_metrics
+--    Links every original log request to its simulated metric row.
+-- ============================================================
+SELECT
+  o.id                        AS original_request_id,
+  o.timestamp                 AS original_timestamp,
+  o.host                      AS original_host,
+  o.uri                       AS original_uri,
+  l.api_metric_id,
+  m.simulated_call_timestamp,
+  m.host                      AS metric_host,
+  m.uri                       AS metric_uri,
+  m.status_code,
+  m.method,
+  m.content_type,
+  m.request_size_bytes,
+  m.response_size_bytes,
+  m.latency_seconds,
+  m.request_body,
+  m.response_body,
+  m.applicable_pattern
+FROM api_requests_original o
+JOIN api_metric_original_links l ON l.original_request_id = o.id
+JOIN api_metrics m               ON m.id = l.api_metric_id
+ORDER BY o.id DESC
+LIMIT 200;
